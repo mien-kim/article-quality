@@ -45,11 +45,28 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
 .loading{text-align:center;padding:50px;color:var(--text3);font-size:14px}
 .empty{text-align:center;padding:40px;color:var(--text3)}
 @media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+
+.top-nav{display:flex;align-items:center;gap:24px;padding:12px 20px;background:rgba(15,15,26,0.95);border-bottom:1px solid rgba(255,255,255,0.08);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.nav-logo{color:#f0f0f5;text-decoration:none;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-logo i{color:#6c8cff}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-link{color:#a0a0c0;text-decoration:none;font-size:13px;padding:6px 14px;border-radius:6px;transition:all 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.nav-link:hover{background:rgba(255,255,255,0.06);color:#f0f0f5}
+.nav-link.active{background:rgba(108,140,255,0.15);color:#6c8cff}
+@media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-links{margin-left:0;flex-wrap:wrap}}
+
 </style>
 </head>
 <body>
+<nav class="top-nav">
+  <a href="index.html" class="nav-logo"><i class="fa-solid fa-chart-line"></i> 경향신문 기사 품질 분석</a>
+  <div class="nav-links">
+    <a href="kyunghyang-english.html" class="nav-link" id="nav-kh"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
+    <a href="k-culture.html" class="nav-link" id="nav-kc"><i class="fa-solid fa-film"></i> K-Culture</a>
+    <a href="editorial-standards.html" class="nav-link" id="nav-std"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
+  </div>
+</nav>
 
-<div class="nav"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> 메인으로</a></div>
 <h1><i class="fa-solid fa-film"></i>K-Culture</h1>
 <p class="sub">스포츠경향 K-Culture 영문 기사 품질 분석 · 엔터테인먼트 · 음악 · 영화 · TV | Supabase 실시간 조회</p>
 
@@ -153,6 +170,8 @@ function render(){
 }
 
 (function(){var lw=getLastWeek();document.getElementById('dateFrom').value=lw.from;document.getElementById('dateTo').value=lw.to;loadData()})();
+
+document.getElementById("nav-kc").classList.add("active");
 </script>
 </body>
 </html>
