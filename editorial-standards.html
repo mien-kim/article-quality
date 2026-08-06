@@ -16,15 +16,15 @@ body{background:var(--bg);margin:0;padding:24px 32px;font-family:-apple-system,B
 h1{font-size:24px;font-weight:700;margin:0 0 4px}
 h1 i{color:var(--primary);margin-right:8px}
 .subtitle{color:var(--text3);font-size:13px;margin-bottom:24px}
-.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.filter-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit}
-.filter-btn:hover{background:var(--border);color:var(--text)}
-.filter-btn.active{background:var(--primary);border-color:var(--primary);color:#000}
-.filter-divider{width:1px;height:24px;background:var(--border);margin:0 4px}
-.filter-input{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text);font-family:inherit}
-.filter-input:focus{outline:none;border-color:var(--primary)}
-.filter-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.03em}
-.filter-search-btn{background:var(--primary);border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;color:#000;cursor:pointer;margin-left:8px}
+
+
+
+
+
+
+
+
+
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:16px}
 .card-label{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
@@ -81,6 +81,15 @@ td.issue-detail .before-after strong{color:var(--text)}
 .nav-link.active{background:rgba(108,140,255,0.15);color:#6c8cff}
 @media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-links{margin-left:0;flex-wrap:wrap}}
 
+
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
+.controls label{font-size:12px;color:var(--text3)}
+.controls input[type=date]{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px}
+.controls button{background:var(--primary);color:#000;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.controls button:hover{opacity:0.9}
+.quick-btns{display:flex;gap:6px}
+.qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2)}
+.qb.on{background:rgba(74,222,128,0.15);color:var(--primary);border-color:rgba(74,222,128,0.4)}
 </style>
 </head>
 <body>
@@ -90,25 +99,23 @@ td.issue-detail .before-after strong{color:var(--text)}
     <a href="kyunghyang-english.html" class="nav-link" id="nav-kh"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
     <a href="k-culture.html" class="nav-link" id="nav-kc"><i class="fa-solid fa-film"></i> K-Culture</a>
     <a href="editorial-standards.html" class="nav-link" id="nav-std"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
+    <a href="auto-translate.html" class="nav-link" id="nav-at"><i class="fa-solid fa-language"></i> Auto Translate</a>
   </div>
 </nav>
 
 <h1><i class="fa-solid fa-spell-check"></i>경향 보도 기준</h1>
 <p class="subtitle">스타일가이드 · 젠더 보도 가이드라인 · 표기/맞춤법 검수 | Supabase 실시간 조회</p>
 
-<div class="filter-bar">
-  <span class="filter-label">기간</span>
-  <button class="filter-btn active" data-range="today">오늘</button>
-  <button class="filter-btn" data-range="yesterday">어제</button>
-  <button class="filter-btn" data-range="week">이번 주</button>
-  <button class="filter-btn" data-range="month">이번 달</button>
-  <button class="filter-btn" data-range="7days">최근 7일</button>
-  <div class="filter-divider"></div>
-  <span class="filter-label">직접 선택</span>
-  <input type="date" class="filter-input" id="date-from">
-  <span style="color:var(--text3);font-size:12px">~</span>
-  <input type="date" class="filter-input" id="date-to">
-  <button class="filter-search-btn" id="btn-search"><i class="fa-solid fa-magnifying-glass" style="margin-right:4px"></i>조회</button>
+<div class="controls">
+<label>시작일</label><input type="date" id="date-from">
+<label>종료일</label><input type="date" id="date-to">
+<button onclick="loadData()">조회</button>
+<div class="quick-btns">
+<div class="qb" onclick="setRange('today')">오늘</div>
+<div class="qb" onclick="setRange('week')">이번 주</div>
+<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb" onclick="setRange('month')">이번 달</div>
+</div>
 </div>
 
 <div class="grid">
@@ -218,29 +225,26 @@ var SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 var TABLE_NAME = 'article_reviews'; // 국문 기사 검수 결과 테이블
 
-// Filter buttons
-document.querySelectorAll('.filter-btn').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
-    this.classList.add('active');
-    var range = this.dataset.range;
-    var now = new Date(), f, t = fmt(now);
-    if(range==='today'){f=t}
-    else if(range==='yesterday'){var y=new Date(now);y.setDate(y.getDate()-1);f=t=fmt(y)}
-    else if(range==='week'){var d=now.getDay()||7;f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1))}
-    else if(range==='month'){f=fmt(new Date(now.getFullYear(),now.getMonth(),1))}
-    else if(range==='7days'){var w=new Date(now);w.setDate(w.getDate()-6);f=fmt(w)}
-    document.getElementById('date-from').value=f;
-    document.getElementById('date-to').value=t;
-    fetchData(f,t);
-  });
-});
+function getLastWeek(){var now=new Date(),day=now.getDay()||7;var m=new Date(now);m.setDate(now.getDate()-day-6);var s=new Date(m);s.setDate(m.getDate()+6);return{from:fmt(m),to:fmt(s)}}
 
-document.getElementById('btn-search').addEventListener('click', function(){
+function setRange(r){
+  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
+  event.target.classList.add('on');
+  var now=new Date(),f,t;
+  if(r==='today'){f=t=fmt(now)}
+  else if(r==='week'){var d=now.getDay()||7;f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1));t=fmt(now)}
+  else if(r==='lastweek'){var lw=getLastWeek();f=lw.from;t=lw.to}
+  else if(r==='month'){f=fmt(new Date(now.getFullYear(),now.getMonth(),1));t=fmt(now)}
+  document.getElementById('date-from').value=f;
+  document.getElementById('date-to').value=t;
+  fetchData(f,t);
+}
+
+function loadData(){
   var f=document.getElementById('date-from').value;
   var t=document.getElementById('date-to').value;
   if(f&&t) fetchData(f,t);
-});
+}
 
 function fmt(d){return d.toISOString().split('T')[0]}
 
@@ -332,12 +336,12 @@ function renderDashboard(data, from, to){
   }).join('');
 }
 
-// Init: set today
+// Init: set last week as default
 (function(){
-  var today=fmt(new Date());
-  document.getElementById('date-from').value=today;
-  document.getElementById('date-to').value=today;
-  fetchData(today,today);
+  var lw=getLastWeek();
+  document.getElementById('date-from').value=lw.from;
+  document.getElementById('date-to').value=lw.to;
+  fetchData(lw.from,lw.to);
 })();
 
 document.getElementById("nav-std").classList.add("active");

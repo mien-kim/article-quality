@@ -55,6 +55,22 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
 .nav-link.active{background:rgba(108,140,255,0.15);color:#6c8cff}
 @media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-links{margin-left:0;flex-wrap:wrap}}
 
+
+.row-clickable{cursor:pointer}
+.row-clickable:hover td{background:rgba(167,139,250,0.08)}
+.issue-row{display:none}
+.issue-row.open{display:table-row}
+.issue-row td{padding:12px 16px;background:rgba(167,139,250,0.03);border-left:3px solid var(--accent)}
+.issue-detail{font-size:13px;line-height:1.8}
+.issue-item-d{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(42,58,94,0.3)}
+.issue-item-d:last-child{border-bottom:none;margin-bottom:0}
+.issue-sev{display:inline-block;margin-right:6px}
+.issue-cat{color:var(--text2);font-size:12px}
+.issue-ba{margin:4px 0 0 20px;font-size:12px;color:var(--text2)}
+.issue-ba strong{color:var(--text)}
+.no-issues{color:var(--text3);font-style:italic;font-size:12px}
+.expand-icon{color:var(--text3);font-size:11px;transition:transform 0.2s}
+.expand-icon.open{transform:rotate(90deg)}
 </style>
 </head>
 <body>
@@ -64,6 +80,7 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
     <a href="kyunghyang-english.html" class="nav-link" id="nav-kh"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
     <a href="k-culture.html" class="nav-link" id="nav-kc"><i class="fa-solid fa-film"></i> K-Culture</a>
     <a href="editorial-standards.html" class="nav-link" id="nav-std"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
+    <a href="auto-translate.html" class="nav-link" id="nav-at"><i class="fa-solid fa-language"></i> Auto Translate</a>
   </div>
 </nav>
 
@@ -97,7 +114,7 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
 
 <div class="tbl-wrap">
 <table class="m">
-<thead><tr><th>점수</th><th>제목 / 기자</th><th>FK</th><th>날짜</th><th>링크</th></tr></thead>
+<thead><tr><th></th><th>점수</th><th>제목 / 기자</th><th>FK</th><th>날짜</th><th>링크</th></tr></thead>
 <tbody id="tbl"></tbody>
 </table>
 </div>
@@ -162,11 +179,36 @@ function render(){
   var days=Object.keys(daily).sort();
   Highcharts.chart('chart-daily',{chart:{backgroundColor:'transparent'},title:{text:'일별 추이',style:{fontSize:'14px',color:'#e8e8e8'}},xAxis:{categories:days.map(function(d){return d.slice(5)}),labels:{style:{color:'#6b7a8d'}},lineColor:'#2a3a5e'},yAxis:[{title:{text:null},min:50,max:90,gridLineColor:'#2a3a5e',labels:{style:{color:'#6b7a8d'}}},{title:{text:null},opposite:true,gridLineColor:'transparent',labels:{style:{color:'#6b7a8d'}}}],series:[{name:'평균',type:'spline',data:days.map(function(d){return Math.round(daily[d].sum/daily[d].cnt*10)/10}),color:'#a78bfa',lineWidth:2.5},{name:'건수',type:'column',data:days.map(function(d){return daily[d].cnt}),color:'rgba(167,139,250,0.25)',yAxis:1}],legend:{itemStyle:{color:'#a8b2c1'}},credits:{enabled:false}});
 
-  document.getElementById('tbl').innerHTML=allData.map(function(d){
+  var html='';
+  allData.forEach(function(d,idx){
     var cls=d.score>=80?'b-h':d.score>=70?'b-m':d.score>=60?'b-w':'b-l';
     var dt=d.published_at?d.published_at.slice(5,16).replace('T',' '):'';
-    return '<tr><td><span class="badge '+cls+'">'+d.score+'</span></td><td><span style="font-size:13px">'+d.title.slice(0,55)+'</span><br><span style="font-size:11px;color:#6b7a8d">'+(d.byline||'')+'</span></td><td style="font-family:monospace;color:'+(d.fk_grade<=12?'#66bb6a':d.fk_grade>14?'#ef5350':'#ff9800')+'">'+d.fk_grade+'</td><td style="font-size:12px;color:#6b7a8d;white-space:nowrap">'+dt+'</td><td><a class="lnk" href="'+d.url+'" target="_blank">원문</a></td></tr>';
-  }).join('');
+    var issues=d.issues||[];
+    if(typeof issues==='string'){try{issues=JSON.parse(issues)}catch(e){issues=[]}}
+    html+='<tr class="row-clickable" onclick="toggleIssue('+idx+')"><td><i class="fa-solid fa-chevron-right expand-icon" id="exp-'+idx+'"></i></td><td><span class="badge '+cls+'">'+d.score+'</span></td><td><span style="font-size:13px">'+d.title.slice(0,55)+'</span><br><span style="font-size:11px;color:#6b7a8d">'+(d.byline||'')+'</span></td><td style="font-family:monospace;color:'+(d.fk_grade<=12?'#66bb6a':d.fk_grade>14?'#ef5350':'#ff9800')+'">'+d.fk_grade+'</td><td style="font-size:12px;color:#6b7a8d;white-space:nowrap">'+dt+'</td><td><a class="lnk" href="'+d.url+'" target="_blank" onclick="event.stopPropagation()">원문</a></td></tr>';
+    var issueHtml='';
+    if(d.fk_grade>14) issueHtml+='<div class="issue-item-d"><span class="issue-sev">🟠</span><span class="issue-cat">가독성</span><div class="issue-ba"><strong>이슈:</strong> FK Grade '+d.fk_grade+' (목표 8~12 초과)</div><div class="issue-ba"><strong>개선:</strong> 긴 문장을 분리하고 어려운 단어를 쉬운 표현으로 교체</div></div>';
+    if(d.score<60) issueHtml+='<div class="issue-item-d"><span class="issue-sev">🔴</span><span class="issue-cat">게시보류 권장</span><div class="issue-ba"><strong>이슈:</strong> 전체 점수 '+d.score+'점 (60점 미만)</div><div class="issue-ba"><strong>개선:</strong> 헤드라인, 문장 구조, 문화적 접근성 전반 개선 필요</div></div>';
+    else if(d.score<70) issueHtml+='<div class="issue-item-d"><span class="issue-sev">🟡</span><span class="issue-cat">개선 필요</span><div class="issue-ba"><strong>이슈:</strong> 전체 점수 '+d.score+'점 (70점 미만)</div><div class="issue-ba"><strong>개선:</strong> 헤드라인 길이, 문장 구조 점검 권장</div></div>';
+    issues.forEach(function(iss){
+      var sev=iss.severity==='critical'?'🔴':iss.severity==='warning'?'🟠':'🟡';
+      issueHtml+='<div class="issue-item-d"><span class="issue-sev">'+sev+'</span><span class="issue-cat">'+(iss.type||iss.category||'')+'</span>';
+      if(iss.context) issueHtml+='<div class="issue-ba"><strong>Before:</strong> '+iss.context+'</div>';
+      if(iss.replacement) issueHtml+='<div class="issue-ba"><strong>After:</strong> '+iss.replacement+'</div>';
+      issueHtml+='</div>';
+    });
+    if(!issueHtml) issueHtml='<span class="no-issues">이슈 없음 — 양호</span>';
+    html+='<tr class="issue-row" id="issue-'+idx+'"><td colspan="6"><div class="issue-detail">'+issueHtml+'</div></td></tr>';
+  });
+  document.getElementById('tbl').innerHTML=html;
+}
+
+
+function toggleIssue(idx){
+  var row=document.getElementById('issue-'+idx);
+  var icon=document.getElementById('exp-'+idx);
+  if(row.classList.contains('open')){row.classList.remove('open');icon.classList.remove('open')}
+  else{row.classList.add('open');icon.classList.add('open')}
 }
 
 (function(){var lw=getLastWeek();document.getElementById('dateFrom').value=lw.from;document.getElementById('dateTo').value=lw.to;loadData()})();
