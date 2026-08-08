@@ -110,7 +110,7 @@ a:hover { text-decoration:underline; }
 
   <div class="table-wrap">
     <table>
-      <thead><tr><th>점수</th><th>제목 / 기자</th><th>FK</th><th>이슈</th><th>날짜</th><th>링크</th></tr></thead>
+      <thead><tr><th>점수</th><th>제목</th><th>FK</th><th>이슈 및 개선사항</th><th>날짜</th><th>링크</th></tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
   </div>
@@ -215,20 +215,18 @@ function renderDashboard(data) {
     if (typeof issues === 'string') { try { issues = JSON.parse(issues); } catch(e) { issues = []; } }
     if (issues && Array.isArray(issues) && issues.length > 0) {
       issues.slice(0,3).forEach(iss => {
-        if (iss.before && iss.after) {
-          issueHtml += `<div class="issue-item"><span class="issue-before">${iss.before}</span> → <span class="issue-after">${iss.after}</span></div>`;
-        } else {
-          const sev = iss.severity==='critical'?'🔴':iss.severity==='warning'?'🟡':'⚪';
-          issueHtml += `<div class="issue-item">${sev} ${iss.description||iss.type||''}</div>`;
-        }
+        const sev = iss.severity==='critical'?'🔴':iss.severity==='warning'?'🟡':'⚪';
+        issueHtml += `<div class="issue-item" style="margin-bottom:6px;">${sev} <strong>${iss.description||iss.type||''}</strong></div>`;
+        if (iss.before) issueHtml += `<div class="issue-item" style="margin-left:16px;color:#f87171;">Before: ${iss.before}</div>`;
+        if (iss.after) issueHtml += `<div class="issue-item" style="margin-left:16px;color:#4ade80;">After: ${iss.after}</div>`;
       });
     }
     if (!issueHtml && (d.fk_grade||0) > 14) {
-      issueHtml = `<div class="issue-item">🟠 FK ${(d.fk_grade||0).toFixed(1)} (14 이하 권장)</div>`;
+      issueHtml = `<div class="issue-item">🟠 <strong>FK Grade ${(d.fk_grade||0).toFixed(1)} — 가독성 저하</strong></div><div class="issue-item" style="margin-left:16px;color:var(--text-secondary);">목표: FK 8~12 (일반 영어 뉴스 수준)</div>`;
     }
     html += `<tr>
       <td><span class="badge ${scoreClass}">${d.score||'-'}</span></td>
-      <td>${d.title||''}<br><small style="color:var(--text-secondary)">${d.reporter||''}</small></td>
+      <td>${d.title||''}</td>
       <td>${d.fk_grade||'-'}</td>
       <td>${issueHtml||'-'}</td>
       <td>${(d.created_at||'').slice(0,10)}</td>
