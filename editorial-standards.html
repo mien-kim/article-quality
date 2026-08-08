@@ -249,7 +249,25 @@ function renderDashboard(data) {
   document.getElementById('tableBody').innerHTML = html;
 }
 
-document.addEventListener('DOMContentLoaded', () => { setQuick('month'); });
+document.addEventListener('DOMContentLoaded', () => {
+  // First try loading all data (no date filter) to check if any exists
+  fetchAll().then(() => {
+    // If no data found with all-time query, show empty state
+    // Otherwise set to this month
+  });
+});
+
+async function fetchAll() {
+  let q = TABLE + '?select=*&order=created_at.desc&limit=100';
+  try {
+    const data = await supaFetch(q);
+    if (data && data.length > 0) {
+      renderDashboard(data);
+    } else {
+      renderDashboard([]);
+    }
+  } catch(err) { renderDashboard([]); }
+}
 </script>
 </body>
 </html>
