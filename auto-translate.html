@@ -134,13 +134,16 @@ const TABLE = 'auto_translations';
 
 function cleanText(str) {
   if (!str) return '-';
-  // Fix common UTF-8 mojibake patterns
   return str
+    // Fix UTF-8 mojibake: em dash
     .replace(/\u00e2\u0080\u0094/g, '—')
     .replace(/â\u0080\u0094/g, '—')
-    .replace(/â/g, '—')
-    .replace(/ë/g, '높')
-    .replace(/\u00eb/g, '높');
+    .replace(/â€"/g, '—')
+    .replace(/â€\u0094/g, '—')
+    // Fix corrupted Korean (AI/encoding errors)
+    .replace(/놙음/g, '높음')
+    .replace(/놙/g, '높')
+    .replace(/ë†™/g, '높');
 }
 
 
