@@ -110,7 +110,7 @@ a:hover { text-decoration:underline; }
 
   <div class="table-wrap">
     <table>
-      <thead><tr><th>관심도</th><th>품질</th><th>원본 → 번역 제목</th><th>선별 근거</th><th>섹션</th><th>날짜</th><th>상태</th></tr></thead>
+      <thead><tr><th>관심도</th><th>품질</th><th>원본 → 번역 제목</th><th>선별 근거</th><th>섹션</th><th>날짜</th><th>상태</th><th>원문</th></tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
   </div>
@@ -131,6 +131,18 @@ a:hover { text-decoration:underline; }
 const SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 const TABLE = 'auto_translations';
+
+function cleanText(str) {
+  if (!str) return '-';
+  // Fix common UTF-8 mojibake patterns
+  return str
+    .replace(/\u00e2\u0080\u0094/g, '—')
+    .replace(/â\u0080\u0094/g, '—')
+    .replace(/â/g, '—')
+    .replace(/ë/g, '높')
+    .replace(/\u00eb/g, '높');
+}
+
 
 function supaFetch(query) {
   return fetch(`${SUPABASE_URL}/rest/v1/${query}`, {
@@ -235,10 +247,11 @@ function renderDashboard(data) {
         <div style="font-size:0.8rem;color:var(--text-secondary);">${d.original_title||''}</div>
         <div>${d.translated_title||''}</div>
       </td>
-      <td style="font-size:0.78rem;color:var(--text-secondary);max-width:160px;">${d.selection_reason||'-'}</td>
+      <td style="font-size:0.78rem;color:var(--text-secondary);max-width:160px;">${cleanText(d.selection_reason)}</td>
       <td>${d.section||'-'}</td>
       <td>${(d.created_at||'').slice(0,10)}</td>
       <td>${statusBadge}</td>
+      <td>${d.original_url?`<a href="${d.original_url}" target="_blank" title="원문 기사"><i class="fa-solid fa-newspaper"></i></a>`:'-'}</td>
     </tr>`;
   });
   document.getElementById('tableBody').innerHTML = html;
@@ -263,7 +276,7 @@ function showPreview(idx) {
     <h3 style="margin-bottom:16px;">${d.translated_title||''}</h3>
     <div style="background:var(--bg-secondary);border-radius:8px;padding:12px;margin-bottom:16px;">
       <strong style="color:var(--accent);font-size:0.85rem;"><i class="fa-solid fa-bullseye"></i> 선별 근거</strong>
-      <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:6px;">${d.selection_reason||'정보 없음'}</p>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:6px;">${cleanText(d.selection_reason)}</p>
       <p style="color:var(--text-secondary);font-size:0.8rem;margin-top:4px;">관심도 점수: <strong style="color:var(--accent);">${d.interest_score||'-'}</strong>/100</p>
     </div>
     <div style="color:var(--text-secondary);font-size:0.9rem;line-height:1.8;white-space:pre-wrap;">${d.translated_body||d.body||'본문 없음'}</div>
