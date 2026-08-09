@@ -124,6 +124,19 @@ const SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YWZscGVweXJsZmRjeHZ0c2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDk0NjEsImV4cCI6MjEwMTUyNTQ2MX0.0E68M0hqgH1tWmWmSE1Cs9MTYqLaOTBsjen0d2rnjGE';
 const TABLE = 'english_article_quality';
 const SOURCE = 'kh';
+  function cleanText(str) {
+  if (!str) return '';
+  return str
+    .replace(/기저/g, '기준')
+    .replace(/젥문/g, '장문')
+    .replace(/잡문/g, '장문')
+    .replace(/놙음/g, '높음')
+    .replace(/놙/g, '높')
+    .replace(/랏랏랏동해얀/g, '')
+    .replace(/â€"/g, '—')
+    .replace(/â€\u0094/g, '—')
+    .replace(/\u00e2\u0080\u0094/g, '—');
+}
 
 function supaFetch(query) {
   return fetch(`${SUPABASE_URL}/rest/v1/${query}`, {
