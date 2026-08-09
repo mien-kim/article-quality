@@ -64,6 +64,9 @@ a:hover { text-decoration:underline; }
   .nav-links { gap:4px; }
   .nav-btn span { display:none; }
 }
+
+table th:nth-child(2), table td:nth-child(2) { max-width: 250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+table th:nth-child(4), table td:nth-child(4) { min-width: 280px; }
 </style>
 </head>
 <body>
@@ -121,6 +124,21 @@ const SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 const TABLE = 'english_article_quality';
 const SOURCE = 'kc';
+
+function cleanText(str) {
+  if (!str) return '';
+  return str
+    .replace(/기저/g, '기준')
+    .replace(/젥문/g, '장문')
+    .replace(/잡문/g, '장문')
+    .replace(/놙음/g, '높음')
+    .replace(/놙/g, '높')
+    .replace(/랏랏랏동해얀/g, '')
+    .replace(/â€"/g, '—')
+    .replace(/â€\u0094/g, '—')
+    .replace(/\u00e2\u0080\u0094/g, '—');
+}
+
 
 function supaFetch(query) {
   return fetch(`${SUPABASE_URL}/rest/v1/${query}`, {
@@ -216,17 +234,17 @@ function renderDashboard(data) {
     if (issues && Array.isArray(issues) && issues.length > 0) {
       issues.slice(0,3).forEach(iss => {
         const sev = iss.severity==='critical'?'🔴':iss.severity==='warning'?'🟡':'⚪';
-        issueHtml += `<div class="issue-item" style="margin-bottom:6px;">${sev} <strong>${iss.description||iss.type||''}</strong></div>`;
-        if (iss.before) issueHtml += `<div class="issue-item" style="margin-left:16px;color:#f87171;">Before: ${iss.before}</div>`;
+        issueHtml += `<div class="issue-item" style="margin-bottom:6px;">${sev} <strong>${cleanText(iss.description||iss.type||'')}</strong></div>`;
+        if (iss.before) issueHtml += `<div class="issue-item" style="margin-left:16px;color:#f87171;">Before: ${cleanText(iss.before)}</div>`;
         if (iss.after) issueHtml += `<div class="issue-item" style="margin-left:16px;color:#4ade80;">After: ${iss.after}</div>`;
       });
     }
     if (!issueHtml && (d.fk_grade||0) > 14) {
-      issueHtml = `<div class="issue-item">🟠 <strong>FK Grade ${(d.fk_grade||0).toFixed(1)} — 가독성 저하</strong></div><div class="issue-item" style="margin-left:16px;color:var(--text-secondary);">목표: FK 8~12 (일반 영어 뉴스 수준)</div>`;
+      issueHtml = `<div class="issue-item">🟠 <strong>FK Grade ${(d.fk_grade||0).toFixed(1)} — 가독성 저하</strong></div><div class="issue-item" style="margin-left:16px;color:var(--text-secondary);">목표: FK 8~12 (일반 영어 뉴스 기준)</div>`;
     }
     html += `<tr>
       <td><span class="badge ${scoreClass}">${d.score||'-'}</span></td>
-      <td>${d.title||''}</td>
+      <td title="${d.title||''}" style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.title||''}</td>
       <td>${d.fk_grade||'-'}</td>
       <td>${issueHtml||'-'}</td>
       <td>${(d.created_at||'').slice(0,10)}</td>
