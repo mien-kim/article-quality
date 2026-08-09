@@ -254,8 +254,8 @@ function renderDashboard(data) {
       <td><strong style="color:var(--accent);">${d.interest_score||'-'}</strong></td>
       <td>${d.quality_score||'-'}</td>
       <td>
-        <div style="font-size:0.8rem;color:var(--text-secondary);">${d.original_title||''}</div>
-        <div>${d.translated_title||''}</div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);">${cleanText(d.original_title||'')}</div>
+<div>${cleanText(d.translated_title||'')}</div>
       </td>
       <td style="font-size:0.78rem;color:var(--text-secondary);max-width:160px;">${cleanText(d.selection_reason)}</td>
       <td>${d.section||'-'}</td>
