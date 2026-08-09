@@ -152,9 +152,9 @@ function setQuick(mode) {
 async function fetchData() {
   const s = document.getElementById('startDate').value;
   const e = document.getElementById('endDate').value;
-  let q = `${TABLE}?select=*&order=created_at.desc`;
-  if (s) q += `&created_at=gte.${s}T00:00:00`;
-  if (e) q += `&created_at=lte.${e}T23:59:59`;
+  let q = `${TABLE}?select=*&order=reviewed_at.desc`;
+  if (s) q += `&reviewed_at=gte.${s}T00:00:00`;
+  if (e) q += `&reviewed_at=lte.${e}T23:59:59`;
   
   try {
     const data = await supaFetch(q);
@@ -239,7 +239,7 @@ function renderDashboard(data) {
       });
     }
     html += `<tr>
-      <td>${(d.created_at||'').slice(0,16).replace('T',' ')}</td>
+      <td>${(d.reviewed_at||'').slice(0,16).replace('T',' ')}</td>
       <td>${d.title||''}</td>
       <td>${d.reporter||''}</td>
       <td><span class="badge ${scoreClass}">${d.score||'-'}</span></td>
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchAll() {
-  let q = TABLE + '?select=*&order=created_at.desc&limit=100';
+  let q = TABLE + '?select=*&order=reviewed_at.desc&limit=100';
   try {
     const data = await supaFetch(q);
     if (data && data.length > 0) {
