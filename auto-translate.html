@@ -149,7 +149,8 @@ function cleanText(str) {
     .replace(/젥문/g, '장문')
     .replace(/잡문/g, '장문')
     // Remove any remaining garbled sequences (non-standard chars between Korean)
-    .replace(/[\u0080-\u00ff]{2,}/g, '—');
+    .replace(/랏/g, '·')
+    .replace(/Â°/g, '°');
 }
 
 
