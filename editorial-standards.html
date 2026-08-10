@@ -1,319 +1,418 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>편집기준 검수 대시보드</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>경향 보도 기준 — 국문 기사 검수</title>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.1.2/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highcharts@12.1.2/modules/accessibility.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--bg:#1a1d23;--bg2:#22262e;--surface:#2a2f38;--border:#353a44;--text:#e4e7ec;--accent:#4ade80;--accent-dim:rgba(74,222,128,0.12)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0.7rem 1.5rem;display:flex;align-items:center;flex-wrap:wrap;gap:0.8rem}
-.nav-brand{display:flex;align-items:center;gap:0.6rem;margin-right:auto}
-.nav-brand .flask{font-size:1.4rem;color:#4fc3f7}
-.nav-brand .titles{display:flex;flex-direction:column}
-.nav-brand .main-t{font-weight:700;font-size:1rem;color:var(--text)}
-.nav-brand .sub-t{font-size:0.7rem;color:#888;margin-top:1px}
-.nav-menu{display:flex;gap:0.4rem;flex-wrap:wrap}
-.nav-btn{padding:0.45rem 1rem;border-radius:8px;font-size:0.82rem;font-weight:500;color:#aaa;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;text-decoration:none}
-.nav-btn:hover{border-color:var(--accent);color:var(--text)}
-.nav-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
-.container{max-width:1400px;margin:0 auto;padding:1.5rem}
-h1{font-size:1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem}
-.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap}
-.filter-bar label{font-size:0.82rem;color:#aaa}
-.filter-bar input[type=date]{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:0.4rem 0.6rem;border-radius:6px;font-size:0.82rem}
-.filter-bar .btn{padding:0.4rem 0.9rem;border-radius:6px;font-size:0.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text);transition:all 0.2s}
-.filter-bar .btn:hover{border-color:var(--accent);color:var(--accent)}
-.filter-bar .btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
-.quick-btns{display:flex;gap:0.4rem}
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center}
-.kpi-card .value{font-size:1.7rem;font-weight:700;color:var(--accent)}
-.kpi-card .label{font-size:0.78rem;color:#888;margin-top:0.3rem}
+:root{--bg:#1a1d23;--bg2:#22262e;--surface:#2a2f38;--border:#353a44;--border-l:#2e333d;--text:#e4e7ec;--text2:#a1a8b8;--text3:#6b7385;--primary:#4ade80;--error:#f87171;--warning:#fbbf24;--orange:#fb923c;--cat-style:#5b9ef4;--cat-gender:#f87171;--cat-spell:#fbbf24;--radius:8px}
+*{box-sizing:border-box}
+body{background:var(--bg);margin:0;padding:24px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text);font-size:15px;line-height:1.6}
+h1{font-size:24px;font-weight:700;margin:0 0 4px}
+h1 i{color:var(--primary);margin-right:8px}
+.subtitle{color:var(--text3);font-size:13px;margin-bottom:24px}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:16px}
+.card-label{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.card-value{font-size:28px;font-weight:700;font-family:'SF Mono',Consolas,monospace}
+.card-sub{font-size:12px;margin-top:4px;color:var(--text2)}
+
 /* Criteria panel */
-.criteria-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem}
-.criteria-toggle{cursor:pointer;display:flex;align-items:center;gap:0.5rem;font-weight:600;font-size:0.9rem}
-.criteria-toggle i{transition:transform 0.2s}
-.criteria-toggle.open i{transform:rotate(90deg)}
-.criteria-cards{display:none;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-top:1rem}
-.criteria-cards.show{display:grid}
-.crit-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem}
-.crit-card h3{font-size:0.9rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem}
-.crit-card p{font-size:0.78rem;color:#aaa;line-height:1.5}
-.cat-style{color:#5b9ef4}
-.cat-gender{color:#f87171}
-.cat-spell{color:#fbbf24}
-/* Charts */
-.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem}
-.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;min-height:280px}
-/* Table */
-.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.table-wrap table{width:100%;border-collapse:collapse;font-size:0.83rem}
-.table-wrap th{background:var(--bg2);padding:0.7rem 0.8rem;text-align:left;font-weight:600;color:#aaa;font-size:0.78rem;border-bottom:1px solid var(--border)}
-.table-wrap td{padding:0.65rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top}
-.table-wrap tr:hover{background:rgba(74,222,128,0.04)}
-.badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
-.badge-style{background:rgba(91,158,244,0.15);color:#5b9ef4}
-.badge-gender{background:rgba(248,113,113,0.15);color:#f87171}
-.badge-spell{background:rgba(251,191,36,0.15);color:#fbbf24}
-.issue-inline{margin-top:0.4rem}
-.issue-chip{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.6rem;margin:0.2rem;font-size:0.78rem}
-.issue-chip .arrow{color:var(--accent);margin:0 0.3rem}
-.footer{text-align:center;padding:2rem;font-size:0.78rem;color:#666;border-top:1px solid var(--border);margin-top:2rem}
-.footer a{color:var(--accent)}
-@media(max-width:700px){
-.charts-row{grid-template-columns:1fr}
-.nav{padding:0.5rem 0.8rem}
-.nav-menu{width:100%;justify-content:center}
-.container{padding:1rem 0.7rem}
-.kpi-row{grid-template-columns:repeat(2,1fr)}
-.filter-bar{flex-direction:column;align-items:stretch}
-.table-wrap{overflow-x:auto}
-}
+.criteria-panel{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
+.criteria-header{display:flex;align-items:center;gap:8px;padding:14px 20px;cursor:pointer;user-select:none;transition:background 0.15s}
+.criteria-header:hover{background:var(--surface)}
+.criteria-chevron{transition:transform 0.25s ease;color:var(--text3);font-size:12px;margin-left:auto}
+.criteria-chevron.open{transform:rotate(180deg)}
+.criteria-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 20px}
+.criteria-body.open{max-height:600px;padding:0 20px 20px}
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.criteria-card{background:var(--surface);border-radius:8px;padding:14px;border-left:3px solid}
+.criteria-card h3{margin:0 0 8px;font-size:14px;font-weight:600}
+.criteria-card ul{margin:0;padding-left:16px;font-size:12px;color:var(--text2);line-height:1.8}
+
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px}
+.chart-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:10px}
+.top-issues{margin-top:8px}
+.issue-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-l);font-size:13px}
+.issue-count{font-family:'SF Mono',Consolas,monospace;font-weight:600;min-width:28px;text-align:right;color:var(--text2)}
+
+.table-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--text3);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase}
+td{padding:8px 10px;border-bottom:1px solid var(--border-l);vertical-align:top}
+tr:hover td{background:var(--surface)}
+tr.detail-row td{padding:0}
+.issue-detail{padding:12px 16px;border-left:3px solid var(--primary);margin:4px 0 8px;background:rgba(74,222,128,0.03);border-radius:0 6px 6px 0}
+.issue-line{margin-bottom:10px;font-size:13px}
+.issue-line:last-child{margin-bottom:0}
+.issue-cat{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px}
+.cat-style{background:rgba(91,158,244,0.15);color:var(--cat-style)}
+.cat-gender{background:rgba(248,113,113,0.15);color:var(--cat-gender)}
+.cat-spell{background:rgba(251,191,36,0.15);color:var(--cat-spell)}
+.before-after{font-size:12px;color:var(--text2);margin:3px 0 0 24px;line-height:1.7}
+.before-after strong{color:var(--text)}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:500}
+.badge-clean{background:rgba(74,222,128,0.12);color:var(--primary)}
+.badge-issue{background:rgba(251,191,36,0.12);color:var(--warning)}
+.empty{text-align:center;padding:40px;color:var(--text3)}
+.loading{text-align:center;padding:50px;color:var(--text3)}
+.title-link{color:var(--text);text-decoration:none}
+.title-link:hover{color:var(--primary);text-decoration:underline}
+.media-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);color:var(--text3);margin-left:4px;font-weight:500}
+
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
+.controls label{font-size:12px;color:var(--text3)}
+.controls input[type=date]{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px}
+.controls button{background:var(--primary);color:#000;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.controls button:hover{opacity:0.9}
+.quick-btns{display:flex;gap:6px}
+.qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2)}
+.qb.on{background:rgba(74,222,128,0.15);color:var(--primary);border-color:rgba(74,222,128,0.4)}
+
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.criteria-grid{grid-template-columns:1fr}}
+
+.top-nav{display:flex;align-items:center;gap:16px;padding:12px 24px;background:rgba(15,15,26,0.97);border-bottom:1px solid rgba(255,255,255,0.06);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.nav-brand{font-size:14px;font-weight:700;color:#f0f0f5;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.nav-brand i{color:#6c8cff;font-size:16px}
+.nav-brand span{font-size:11px;color:#6060a0;margin-left:4px}
+.nav-menu{display:flex;gap:6px}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;color:#a0a0c0;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
+.nav-btn:hover{background:rgba(255,255,255,0.08);color:#f0f0f5;border-color:rgba(255,255,255,0.12)}
+.nav-btn.active-kh{background:rgba(79,195,247,0.12);color:#4fc3f7;border-color:rgba(79,195,247,0.3)}
+.nav-btn.active-kc{background:rgba(167,139,250,0.12);color:#a78bfa;border-color:rgba(167,139,250,0.3)}
+.nav-btn.active-std{background:rgba(74,222,128,0.12);color:#4ade80;border-color:rgba(74,222,128,0.3)}
+.nav-btn.active-at{background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.3)}
+@media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-menu{flex-wrap:wrap}}
+
 </style>
 </head>
 <body>
-<nav class="nav">
-<div class="nav-brand">
-<i class="fas fa-flask flask"></i>
-<div class="titles">
-<span class="main-t">경향신문 AI Newsroom Lab</span>
-<span class="sub-t">Amazon Quick 실험실</span>
-</div>
-</div>
-<div class="nav-menu">
-<a href="kyunghyang-english.html" class="nav-btn">경향 영문</a>
-<a href="k-culture.html" class="nav-btn">K-Culture</a>
-<a href="editorial-standards.html" class="nav-btn active" style="background:rgba(74,222,128,0.12);border-color:#4ade80;color:#4ade80">편집기준</a>
-<a href="auto-translate.html" class="nav-btn">자동번역</a>
-</div>
+<nav class="top-nav">
+  <a href="index.html" class="nav-brand">
+    <i class="fa-solid fa-flask"></i>
+    경향신문 AI Newsroom Lab
+    <span>Amazon Quick 실험실</span>
+  </a>
+  <div class="nav-menu">
+    <a href="kyunghyang-english.html" class="nav-btn"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
+    <a href="k-culture.html" class="nav-btn"><i class="fa-solid fa-film"></i> K-Culture</a>
+    <a href="editorial-standards.html" class="nav-btn active-std"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
+    <a href="auto-translate.html" class="nav-btn"><i class="fa-solid fa-language"></i> Auto Translate</a>
+  </div>
 </nav>
-<div class="container">
-<h1><i class="fas fa-clipboard-check" style="color:var(--accent)"></i> 편집기준 검수 대시보드</h1>
-<div class="filter-bar">
-<label>시작일</label><input type="date" id="startDate">
-<label>종료일</label><input type="date" id="endDate">
-<button class="btn primary" onclick="applyFilter()">조회</button>
+
+<h1><i class="fa-solid fa-spell-check"></i>경향 보도 기준</h1>
+<p class="subtitle">스타일가이드 · 젠더 보도 가이드라인 · 맞춤법 검수 | 이슈 발견 중심</p>
+
+<div class="controls">
+<label>시작일</label><input type="date" id="date-from">
+<label>종료일</label><input type="date" id="date-to">
+<button onclick="loadData()">조회</button>
 <div class="quick-btns">
-<button class="btn" onclick="setQuick('today')">오늘</button>
-<button class="btn" onclick="setQuick('week')">이번주</button>
-<button class="btn" onclick="setQuick('lastweek')">지난주</button>
-<button class="btn" onclick="setQuick('month')">이번달</button>
+<div class="qb" onclick="setRange('today')">오늘</div>
+<div class="qb" onclick="setRange('week')">이번 주</div>
+<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
 
-<!-- Criteria Panel -->
+<div class="grid">
+  <div class="card">
+    <div class="card-label">검수 기사</div>
+    <div class="card-value" id="kpi-total">-</div>
+    <div class="card-sub" id="kpi-total-sub"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">이슈 발견 기사</div>
+    <div class="card-value" style="color:var(--warning)" id="kpi-issue-articles">-</div>
+    <div class="card-sub" id="kpi-issue-pct"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">총 이슈 건수</div>
+    <div class="card-value" style="color:var(--orange)" id="kpi-issue-count">-</div>
+    <div class="card-sub" id="kpi-issue-avg"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">이슈 없음 (클린)</div>
+    <div class="card-value" style="color:var(--primary)" id="kpi-clean">-</div>
+    <div class="card-sub" id="kpi-clean-pct"></div>
+  </div>
+</div>
+
+<!-- Criteria panel -->
 <div class="criteria-panel">
-<div class="criteria-toggle" onclick="toggleCriteria()"><i class="fas fa-chevron-right"></i> 검수 기준 안내</div>
-<div class="criteria-cards" id="criteriaCards">
-<div class="crit-card"><h3><i class="fas fa-pen-nib cat-style"></i> 스타일가이드</h3><p>경향신문 보도문 스타일 가이드에 따른 문체, 표기법, 인용 형식 등을 점검합니다.</p></div>
-<div class="crit-card"><h3><i class="fas fa-venus-mars cat-gender"></i> 젠더보도</h3><p>성별 고정관념, 불필요한 성별 언급, 젠더 감수성 위반 여부를 확인합니다.</p></div>
-<div class="crit-card"><h3><i class="fas fa-spell-check cat-spell"></i> 맞춤법</h3><p>한글 맞춤법, 띄어쓰기, 외래어 표기법 오류를 검출합니다.</p></div>
-</div>
-</div>
-
-<div class="kpi-row">
-<div class="kpi-card"><div class="value" id="kTotal">-</div><div class="label">검수 기사</div></div>
-<div class="kpi-card"><div class="value" id="kWithIssue">-</div><div class="label">이슈 발견 기사</div></div>
-<div class="kpi-card"><div class="value" id="kIssueCount">-</div><div class="label">총 이슈 건수</div></div>
-<div class="kpi-card"><div class="value" id="kClean">-</div><div class="label">이슈 없음(클린)</div></div>
+  <div class="criteria-header" id="criteria-toggle">
+    <i class="fa-solid fa-list-check" style="color:var(--primary)"></i>
+    <span style="font-size:14px;font-weight:600">검수 기준 안내</span>
+    <span style="font-size:12px;color:var(--text3);margin-left:8px">(클릭하여 펼치기)</span>
+    <i class="fa-solid fa-chevron-down criteria-chevron" id="criteria-chevron"></i>
+  </div>
+  <div class="criteria-body" id="criteria-body">
+    <div class="criteria-grid">
+      <div class="criteria-card" style="border-color:var(--cat-style)">
+        <h3>① 스타일 가이드</h3>
+        <ul>
+          <li>차별/혐오 표현 교정</li>
+          <li>비중립적 종결어미</li>
+          <li>'우리나라' → '한국'</li>
+          <li>피동형/수동형 남용</li>
+          <li>'~시키다' 오용</li>
+          <li>비문(주어 생략) 감지</li>
+          <li>영어 약자 남발</li>
+        </ul>
+      </div>
+      <div class="criteria-card" style="border-color:var(--cat-gender)">
+        <h3>② 젠더 보도 가이드라인</h3>
+        <ul>
+          <li>불필요한 성별 강조</li>
+          <li>성별 고정관념 표현</li>
+          <li>돌봄=여성 전제 표현</li>
+          <li>교정 대상 용어</li>
+          <li>성소수자 존중</li>
+        </ul>
+      </div>
+      <div class="criteria-card" style="border-color:var(--cat-spell)">
+        <h3>③ 맞춤법</h3>
+        <ul>
+          <li>표기 오류</li>
+          <li>외래어 표기 오류</li>
+          <li>띄어쓰기 오류</li>
+          <li>동사 활용 오류</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="charts-row">
-<div class="chart-box" id="chartCategory"></div>
-<div class="chart-box" id="chartTop5"></div>
-<div class="chart-box" id="chartDaily"></div>
+  <div class="chart-card">
+    <div class="chart-title">기준별 이슈 현황</div>
+    <div id="chart-by-category" style="height:250px;"></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">빈출 이슈 TOP 5</div>
+    <div class="top-issues" id="top-issues">
+      <div class="issue-item"><span class="issue-count">-</span><span>데이터 조회 후 표시</span></div>
+    </div>
+  </div>
 </div>
 
-<div class="table-wrap">
-<table>
-<thead><tr><th>일시</th><th>매체</th><th>기사 제목</th><th>기자</th><th>이슈 건수</th><th>이슈 상세</th></tr></thead>
-<tbody id="tableBody"></tbody>
-</table>
+<div class="charts-row">
+  <div class="chart-card" style="grid-column:span 2">
+    <div class="chart-title">일별 이슈 건수 추이</div>
+    <div id="chart-trend" style="height:220px;"></div>
+  </div>
 </div>
+
+<div class="table-card">
+  <div class="chart-title">이슈 기사 목록 <span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px">이슈가 발견된 기사만 표시</span></div>
+  <table>
+    <thead><tr><th>일시</th><th style="min-width:60px">매체</th><th>기사 제목</th><th style="min-width:70px">기자</th><th>이슈</th><th style="min-width:320px">이슈 및 개선사항</th></tr></thead>
+    <tbody id="article-table">
+      <tr><td colspan="6" class="empty">날짜를 선택하고 조회를 눌러주세요.</td></tr>
+    </tbody>
+  </table>
 </div>
-<footer class="footer">Made by mien.kim · Powered by Amazon Quick · <a href="https://github.com/mien-kim/article-quality" target="_blank">GitHub</a></footer>
+
+<div class="loading" id="loading" style="display:none">Supabase에서 데이터 로딩 중...</div>
+
+<footer style="text-align:center;padding:24px 0;font-size:12px;color:var(--text3)">
+Made by mien.kim · Powered by Amazon Quick · <a href="https://github.com/mien-kim/article-quality" style="color:var(--text3)">GitHub</a>
+</footer>
 
 <script>
-var SUPABASE_KEY='sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
-var SUPABASE_URL='https://wwaflpepyrlfdcxvtscp.supabase.co';
-var headers={'apikey':SUPABASE_KEY};
+// Toggle criteria panel
+document.getElementById('criteria-toggle').addEventListener('click', function() {
+  document.getElementById('criteria-body').classList.toggle('open');
+  document.getElementById('criteria-chevron').classList.toggle('open');
+});
 
-function cleanText(t){
-if(!t)return '';
-t=String(t);
-t=t.replace(/기저/g,'기준');
-t=t.replace(/젥문/g,'장문');
-t=t.replace(/잡문/g,'장문');
-t=t.replace(/놙음/g,'높음');
-t=t.replace(/놙/g,'높');
-t=t.replace(/랏랏랏동해얀/g,'');
-t=t.replace(/랏/g,'·');
-t=t.replace(/Â°/g,'°');
-t=t.replace(/â€"/g,'—');
-t=t.replace(/â€™/g,"'");
-t=t.replace(/â€œ/g,'"');
-t=t.replace(/â€\u009d/g,'"');
-return t.trim();
+var SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9'; // TODO: 사용자가 실제 JWT anon key로 교체
+var TABLE_NAME = 'article_reviews';
+
+function cleanText(str){
+  if(!str)return '';
+  return str
+    .replace(/기저/g,'기준').replace(/젥문/g,'장문').replace(/잡문/g,'장문')
+    .replace(/놙음/g,'높음').replace(/놙/g,'높')
+    .replace(/랏랏랏동해얀/g,'').replace(/랏/g,'·')
+    .replace(/Â°/g,'°').replace(/â€"/g,'—').replace(/â€\u0094/g,'—').replace(/\u00e2\u0080\u0094/g,'—');
 }
 
-function catClass(c){
-if(!c)return 'badge-style';
-var lc=c.toLowerCase();
-if(lc.includes('스타일')||lc.includes('style'))return 'badge-style';
-if(lc.includes('젠더')||lc.includes('gender'))return 'badge-gender';
-if(lc.includes('맞춤법')||lc.includes('spell'))return 'badge-spell';
-return 'badge-style';
+function getLastWeek(){var now=new Date(),day=now.getDay()||7;var m=new Date(now);m.setDate(now.getDate()-day-6);var s=new Date(m);s.setDate(m.getDate()+6);return{from:fmt(m),to:fmt(s)}}
+function fmt(d){return d.toISOString().split('T')[0]}
+
+function setRange(r){
+  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
+  event.target.classList.add('on');
+  var now=new Date(),f,t;
+  if(r==='today'){f=t=fmt(now)}
+  else if(r==='week'){var d=now.getDay()||7;f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1));t=fmt(now)}
+  else if(r==='lastweek'){var lw=getLastWeek();f=lw.from;t=lw.to}
+  else if(r==='month'){f=fmt(new Date(now.getFullYear(),now.getMonth(),1));t=fmt(now)}
+  document.getElementById('date-from').value=f;
+  document.getElementById('date-to').value=t;
+  fetchData(f,t);
 }
-function catLabel(c){
-if(!c)return '스타일';
-var lc=c.toLowerCase();
-if(lc.includes('스타일')||lc.includes('style'))return '스타일';
-if(lc.includes('젠더')||lc.includes('gender'))return '젠더';
-if(lc.includes('맞춤법')||lc.includes('spell'))return '맞춤법';
-return c;
+
+function loadData(){
+  var f=document.getElementById('date-from').value;
+  var t=document.getElementById('date-to').value;
+  if(f&&t) fetchData(f,t);
 }
+
+async function fetchAll(from, to){
+  var all=[], offset=0, limit=100;
+  while(true){
+    var res = await fetch(
+      SUPABASE_URL+'/rest/v1/'+TABLE_NAME+'?published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc&limit='+limit+'&offset='+offset,
+      {headers:{'apikey':SUPABASE_KEY}}
+    );
+    var data = await res.json();
+    if(!Array.isArray(data)||!data.length) break;
+    all=all.concat(data);
+    if(data.length<limit) break;
+    offset+=limit;
+  }
+  return all;
+}
+
+async function fetchData(from, to){
+  document.getElementById('loading').style.display='block';
+  try{
+    var data = await fetchAll(from, to);
+    document.getElementById('loading').style.display='none';
+    renderDashboard(data, from, to);
+  }catch(e){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('article-table').innerHTML='<tr><td colspan="6" class="empty">조회 실패: '+e.message+'</td></tr>';
+  }
+}
+
 function mediaLabel(m){
-if(!m)return '-';
-var lc=m.toLowerCase();
-if(lc.includes('khan')||lc.includes('경향'))return '경향';
-if(lc.includes('sports')||lc.includes('스경'))return '스경';
-if(lc.includes('weekly')||lc.includes('주간'))return '주간';
-if(lc.includes('lady')||lc.includes('레이디'))return '레이디';
-return m;
+  if(m==='sports') return '스경';
+  if(m==='weekly') return '주간';
+  if(m==='lady') return '레이디';
+  return '경향';
 }
 
-function toggleCriteria(){
-var cards=document.getElementById('criteriaCards');
-var tog=document.querySelector('.criteria-toggle');
-cards.classList.toggle('show');
-tog.classList.toggle('open');
+function catClass(cat){
+  if(!cat) return 'cat-style';
+  var c=cat.toLowerCase();
+  if(c.indexOf('젠더')!==-1||c.indexOf('gender')!==-1) return 'cat-gender';
+  if(c.indexOf('맞춤법')!==-1||c.indexOf('spell')!==-1||c.indexOf('표기')!==-1) return 'cat-spell';
+  return 'cat-style';
 }
 
-function getWeekRange(){
-var now=new Date(),day=now.getDay(),diff=now.getDate()-day+(day===0?-6:1);
-var mon=new Date(now);mon.setDate(diff);mon.setHours(0,0,0,0);
-var sun=new Date(mon);sun.setDate(mon.getDate()+6);
-return{start:fmt(mon),end:fmt(sun)};
-}
-function fmt(d){return d.toISOString().slice(0,10)}
-function setQuick(p){
-var now=new Date(),s,e;
-if(p==='today'){s=e=fmt(now)}
-else if(p==='week'){var r=getWeekRange();s=r.start;e=r.end}
-else if(p==='lastweek'){var r=getWeekRange();var ls=new Date(r.start);ls.setDate(ls.getDate()-7);var le=new Date(r.start);le.setDate(le.getDate()-1);s=fmt(ls);e=fmt(le)}
-else if(p==='month'){s=fmt(new Date(now.getFullYear(),now.getMonth(),1));e=fmt(now)}
-document.getElementById('startDate').value=s;
-document.getElementById('endDate').value=e;
-applyFilter();
+function catLabel(cat){
+  if(!cat) return '스타일';
+  var c=cat.toLowerCase();
+  if(c.indexOf('젠더')!==-1||c.indexOf('gender')!==-1) return '젠더';
+  if(c.indexOf('맞춤법')!==-1||c.indexOf('spell')!==-1||c.indexOf('표기')!==-1) return '맞춤법';
+  return '스타일';
 }
 
-var allData=[];
-async function fetchAll(){
-var s=document.getElementById('startDate').value;
-var e=document.getElementById('endDate').value;
-var all=[], offset=0, limit=1000;
-while(true){
-var url=SUPABASE_URL+'/rest/v1/article_reviews?select=*&order=reviewed_at.desc&offset='+offset+'&limit='+limit;
-if(s)url+='&reviewed_at=gte.'+s+'T00:00:00';
-if(e)url+='&reviewed_at=lte.'+e+'T23:59:59';
-var resp=await fetch(url,{headers:headers});
-var batch=await resp.json();
-if(!Array.isArray(batch)||batch.length===0)break;
-all=all.concat(batch);
-if(batch.length<limit)break;
-offset+=limit;
-}
-allData=all;
-render();
-}
+function renderDashboard(data){
+  var total = data.length;
+  var allIssues = [];
+  var issueArticles = [];
+  var cleanArticles = 0;
 
-function applyFilter(){fetchAll()}
+  data.forEach(function(r){
+    var issues = r.issues || [];
+    if(typeof issues === 'string'){try{issues=JSON.parse(issues)}catch(e){issues=[]}}
+    r._issues = issues;
+    if(issues.length > 0){ issueArticles.push(r); }
+    else{ cleanArticles++; }
+    allIssues = allIssues.concat(issues);
+  });
 
-function render(){
-var data=allData;
-var total=data.length;
-// Count issues per article
-var withIssue=0, totalIssues=0, clean=0;
-var catCount={스타일:0,젠더:0,맞춤법:0};
-var issueDescs={};
-var dailyIssues={};
-var tableRows=[];
+  // KPIs
+  document.getElementById('kpi-total').textContent = total || '-';
+  document.getElementById('kpi-total-sub').textContent = total ? '경향·스경·주간·레이디' : '';
+  document.getElementById('kpi-issue-articles').textContent = issueArticles.length || '0';
+  document.getElementById('kpi-issue-pct').textContent = total ? '전체의 '+Math.round(issueArticles.length/total*100)+'%' : '';
+  document.getElementById('kpi-issue-count').textContent = allIssues.length || '0';
+  document.getElementById('kpi-issue-avg').textContent = issueArticles.length ? '기사당 평균 '+(allIssues.length/issueArticles.length).toFixed(1)+'건' : '';
+  document.getElementById('kpi-clean').textContent = cleanArticles;
+  document.getElementById('kpi-clean-pct').textContent = total ? '전체의 '+Math.round(cleanArticles/total*100)+'%' : '';
 
-data.forEach(function(d){
-var issues=d.issues||[];
-if(typeof issues==='string'){try{issues=JSON.parse(issues)}catch(e){issues=[]}}
-if(!Array.isArray(issues))issues=[];
-var cnt=issues.length;
-totalIssues+=cnt;
-if(cnt>0){
-withIssue++;
-tableRows.push({article:d,issues:issues});
-issues.forEach(function(iss){
-var cat=catLabel(iss.category||iss.type||'');
-if(catCount[cat]!==undefined)catCount[cat]++;
-else catCount['스타일']++;
-var desc=cleanText(iss.description||iss.issue||'').slice(0,40);
-if(desc){issueDescs[desc]=(issueDescs[desc]||0)+1}
-});
-}else{clean++}
-var day=(d.reviewed_at||'').slice(0,10);
-if(day){
-if(!dailyIssues[day])dailyIssues[day]=0;
-dailyIssues[day]+=cnt;
-}
-});
+  if(!total){
+    document.getElementById('article-table').innerHTML='<tr><td colspan="6" class="empty">해당 기간에 검수된 기사가 없습니다.</td></tr>';
+    return;
+  }
 
-document.getElementById('kTotal').textContent=total;
-document.getElementById('kWithIssue').textContent=withIssue;
-document.getElementById('kIssueCount').textContent=totalIssues;
-document.getElementById('kClean').textContent=clean;
+  // Chart: issues by category
+  var catCounts = {'스타일 가이드':0,'젠더 보도':0,'맞춤법':0};
+  var topDescs = {};
+  allIssues.forEach(function(i){
+    var lbl = catLabel(i.category);
+    if(lbl==='스타일') catCounts['스타일 가이드']++;
+    else if(lbl==='젠더') catCounts['젠더 보도']++;
+    else catCounts['맞춤법']++;
+    var desc = cleanText(i.description || i.term || '');
+    if(desc) topDescs[desc]=(topDescs[desc]||0)+1;
+  });
 
-// Category bar chart
-Highcharts.chart('chartCategory',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:'카테고리별 이슈',style:{color:'#e4e7ec',fontSize:'13px'}},xAxis:{categories:['스타일','젠더','맞춤법'],labels:{style:{color:'#ccc'}}},yAxis:{title:{text:''},labels:{style:{color:'#888'}}},series:[{name:'건수',data:[{y:catCount['스타일'],color:'#5b9ef4'},{y:catCount['젠더'],color:'#f87171'},{y:catCount['맞춤법'],color:'#fbbf24'}],showInLegend:false}],plotOptions:{bar:{borderRadius:4}},credits:{enabled:false}});
+  Highcharts.chart('chart-by-category',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:Object.keys(catCounts),labels:{style:{color:'#a1a8b8',fontSize:'13px'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}},allowDecimals:false},legend:{enabled:false},plotOptions:{bar:{borderRadius:4,borderWidth:0,dataLabels:{enabled:true,style:{fontSize:'13px',fontWeight:'700',color:'#e4e7ec',textOutline:'none'}}}},series:[{data:[{y:catCounts['스타일 가이드'],color:'var(--cat-style)'},{y:catCounts['젠더 보도'],color:'var(--cat-gender)'},{y:catCounts['맞춤법'],color:'var(--cat-spell)'}]}],credits:{enabled:false}});
 
-// Top 5 issues
-var sorted=Object.entries(issueDescs).sort((a,b)=>b[1]-a[1]).slice(0,5);
-Highcharts.chart('chartTop5',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:'Top 5 빈출 이슈',style:{color:'#e4e7ec',fontSize:'13px'}},xAxis:{categories:sorted.map(s=>s[0]),labels:{style:{color:'#ccc',fontSize:'10px'}}},yAxis:{title:{text:''},labels:{style:{color:'#888'}}},series:[{name:'건수',data:sorted.map(s=>s[1]),color:'#4ade80',showInLegend:false}],plotOptions:{bar:{borderRadius:4}},credits:{enabled:false}});
+  // Top issues
+  var sorted=Object.entries(topDescs).sort(function(a,b){return b[1]-a[1]}).slice(0,5);
+  document.getElementById('top-issues').innerHTML=sorted.length?sorted.map(function(t){return '<div class="issue-item"><span class="issue-count">'+t[1]+'</span><span>'+cleanText(t[0])+'</span></div>'}).join(''):'<div class="issue-item"><span class="issue-count">0</span><span>이슈 없음</span></div>';
 
-// Daily trend
-var ddays=Object.keys(dailyIssues).sort();
-Highcharts.chart('chartDaily',{chart:{type:'area',backgroundColor:'transparent'},title:{text:'일별 이슈 추이',style:{color:'#e4e7ec',fontSize:'13px'}},xAxis:{categories:ddays,labels:{style:{color:'#888',fontSize:'10px'},rotation:-45}},yAxis:{title:{text:'이슈 건수'},labels:{style:{color:'#888'}}},series:[{name:'이슈',data:ddays.map(k=>dailyIssues[k]),color:'#4ade80',fillColor:'rgba(74,222,128,0.1)'}],credits:{enabled:false},legend:{itemStyle:{color:'#aaa'}}});
+  // Trend chart: daily issue counts
+  var daily={};
+  data.forEach(function(r){
+    var day=r.published_at?r.published_at.split('T')[0]:'?';
+    if(!daily[day])daily[day]={issues:0,total:0};
+    daily[day].total++;
+    daily[day].issues += (r._issues||[]).length;
+  });
+  var days=Object.keys(daily).sort();
+  Highcharts.chart('chart-trend',{chart:{type:'column',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:days.map(function(d){return d.slice(5)}),labels:{style:{color:'#a1a8b8'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}},allowDecimals:false},legend:{enabled:true,itemStyle:{color:'#a1a8b8'}},plotOptions:{column:{borderRadius:3,borderWidth:0}},series:[{name:'이슈 건수',data:days.map(function(d){return daily[d].issues}),color:'var(--orange)'},{name:'검수 기사',data:days.map(function(d){return daily[d].total}),color:'rgba(74,222,128,0.4)'}],credits:{enabled:false}});
 
-// Table (only articles with issues)
-var tbody=document.getElementById('tableBody');
-tbody.innerHTML='';
-tableRows.forEach(function(row){
-var d=row.article;
-var issues=row.issues;
-var date=(d.reviewed_at||'').slice(0,10);
-var media=mediaLabel(d.media||d.source||'');
-var title=cleanText(d.title||d.headline||'');
-var link=d.article_url||'#';
-var writer=cleanText(d.reporter||d.writer||d.author||'');
-var cnt=issues.length;
-var issueHtml='';
-issues.forEach(function(iss){
-var cat=catLabel(iss.category||iss.type||'');
-var cls=catClass(iss.category||iss.type||'');
-var before=cleanText(iss.before||iss.context||'');
-var after=cleanText(iss.after||iss.replacement||'');
-issueHtml+='<div class="issue-chip"><span class="badge '+cls+'">'+cat+'</span> ';
-if(before&&after){issueHtml+=before+' <span class="arrow">→</span> '+after}
-else{issueHtml+=cleanText(iss.description||iss.issue||'')}
-issueHtml+='</div>';
-});
-var tr=document.createElement('tr');
-tr.innerHTML='<td>'+date+'</td><td>'+media+'</td><td><a href="'+link+'" target="_blank">'+title+'</a></td><td>'+writer+'</td><td><span class="badge badge-style">'+cnt+'</span></td><td><div class="issue-inline">'+issueHtml+'</div></td>';
-tbody.appendChild(tr);
-});
+  // Table: only articles with issues
+  if(!issueArticles.length){
+    document.getElementById('article-table').innerHTML='<tr><td colspan="6" class="empty">모든 기사 이슈 없음 ✅</td></tr>';
+    return;
+  }
+  document.getElementById('article-table').innerHTML=issueArticles.map(function(r){
+    var dt=r.published_at?new Date(r.published_at):null;
+    var dateStr=dt?(String(dt.getMonth()+1).padStart(2,'0')+'.'+String(dt.getDate()).padStart(2,'0')+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0')):'';
+    var issues=r._issues||[];
+    var issueCnt = issues.length;
+    var issueHtml=issues.map(function(i){
+      var cls = catClass(i.category);
+      var lbl = catLabel(i.category);
+      var desc = cleanText(i.description || i.term || '');
+      var before = cleanText(i.before || i.context || '');
+      var after = cleanText(i.after || i.replacement || '');
+      return '<div class="issue-line"><span class="issue-cat '+cls+'">'+lbl+'</span>'+desc+'</div>'+
+        (before?'<div class="before-after"><strong>Before:</strong> '+before+'</div>':'')+
+        (after?'<div class="before-after"><strong>After:</strong> '+after+'</div>':'');
+    }).join('');
+    var url = r.article_url || r.url || '#';
+    return '<tr><td>'+dateStr+'</td><td><span class="media-badge">'+mediaLabel(r.media)+'</span></td><td><a href="'+url+'" target="_blank" class="title-link">'+cleanText(r.title)+'</a></td><td>'+(r.reporter||'-')+'</td><td style="text-align:center"><span class="badge badge-issue">'+issueCnt+'건</span></td><td><div class="issue-detail">'+issueHtml+'</div></td></tr>';
+  }).join('');
 }
 
-(function(){setQuick('week')})();
+// Init: load this week
+(function(){
+  var now=new Date(),d=now.getDay()||7;
+  var f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1));
+  var t=fmt(now);
+  document.getElementById('date-from').value=f;
+  document.getElementById('date-to').value=t;
+  // default to this week since data is fresh
+  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
+  document.querySelectorAll('.qb')[1].classList.add('on');
+  fetchData(f,t);
+})();
 </script>
 </body>
 </html>
