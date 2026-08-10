@@ -41,12 +41,12 @@ h1 i{color:var(--primary);margin-right:8px}
 .issue-count{font-family:'SF Mono',Consolas,monospace;font-weight:600;min-width:28px;text-align:right;color:var(--text2)}
 
 .table-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
-table{width:100%;border-collapse:collapse;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
 th{text-align:left;color:var(--text3);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;text-transform:uppercase}
-td{padding:8px 10px;border-bottom:1px solid var(--border-l);vertical-align:top}
+td{padding:8px 10px;border-bottom:1px solid var(--border-l);vertical-align:top;word-break:break-word;overflow-wrap:break-word}
 tr:hover td{background:var(--surface)}
 tr.detail-row td{padding:0}
-.issue-detail{padding:12px 16px;border-left:3px solid var(--primary);margin:4px 0 8px;background:rgba(74,222,128,0.03);border-radius:0 6px 6px 0}
+.issue-detail{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
 .issue-line{margin-bottom:10px;font-size:14px}
 .issue-line:last-child{margin-bottom:0}
 .issue-cat{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;margin-right:6px}
@@ -88,6 +88,9 @@ tr.detail-row td{padding:0}
 .nav-btn.active-at{background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.3)}
 @media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-menu{flex-wrap:wrap}}
 
+.issue-detail .issue-line{display:inline-flex;flex-direction:column;background:var(--surface);border-radius:6px;padding:6px 10px;font-size:13px;max-width:100%}
+.issue-detail .before-after{font-size:12px;color:var(--text2);margin-top:2px}
+.issue-detail .before-after strong{color:var(--text)}
 </style>
 </head>
 <body>
@@ -115,8 +118,8 @@ tr.detail-row td{padding:0}
 <div class="quick-btns">
 <div class="qb" onclick="setRange('today')">오늘</div>
 <div class="qb" onclick="setRange('week')">이번 주</div>
-<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
-<div class="qb" onclick="setRange('month')">이번 달</div>
+<div class="qb" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb on" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
 
@@ -154,7 +157,7 @@ tr.detail-row td{padding:0}
   <div class="criteria-body" id="criteria-body">
     <div class="criteria-grid">
       <div class="criteria-card" style="border-color:var(--cat-style)">
-        <h3>① 스타일 가이드</h3>
+        <h3>① 경향신문 스타일 가이드</h3>
         <ul>
           <li>차별/혐오 표현 교정</li>
           <li>비중립적 종결어미</li>
@@ -166,7 +169,7 @@ tr.detail-row td{padding:0}
         </ul>
       </div>
       <div class="criteria-card" style="border-color:var(--cat-gender)">
-        <h3>② 젠더 보도 가이드라인</h3>
+        <h3>② 경향신문 젠더 보도 가이드라인</h3>
         <ul>
           <li>불필요한 성별 강조</li>
           <li>성별 고정관념 표현</li>
@@ -211,7 +214,7 @@ tr.detail-row td{padding:0}
 <div class="table-card">
   <div class="chart-title">이슈 기사 목록 <span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px">이슈가 발견된 기사만 표시</span></div>
   <table>
-    <thead><tr><th>일시</th><th style="min-width:60px">매체</th><th>기사 제목</th><th style="min-width:70px">기자</th><th>이슈</th><th style="min-width:420px">이슈 및 개선사항</th></tr></thead>
+    <thead><tr><th style="width:7%">일시</th><th style="width:5%">매체</th><th style="width:22%">기사 제목</th><th style="width:6%">기자</th><th style="width:5%">이슈</th><th style="width:55%">이슈 및 개선사항</th></tr></thead>
     <tbody id="article-table">
       <tr><td colspan="6" class="empty">날짜를 선택하고 조회를 눌러주세요.</td></tr>
     </tbody>
@@ -403,15 +406,7 @@ function renderDashboard(data){
 
 // Init: load this week
 (function(){
-  var now=new Date(),d=now.getDay()||7;
-  var f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1));
-  var t=fmt(now);
-  document.getElementById('date-from').value=f;
-  document.getElementById('date-to').value=t;
-  // default to this week since data is fresh
-  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
-  document.querySelectorAll('.qb')[1].classList.add('on');
-  fetchData(f,t);
+  var now=new Date();var f=fmt(new Date(now.getFullYear(),now.getMonth(),1));var t=fmt(now);document.getElementById('date-from').value=f;document.getElementById('date-to').value=t;fetchData(f,t);
 })();
 </script>
 </body>
