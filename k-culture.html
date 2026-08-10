@@ -157,8 +157,8 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:14px}
 <div class="quick-btns">
 <div class="qb" onclick="setRange('today')">오늘</div>
 <div class="qb" onclick="setRange('week')">이번 주</div>
-<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
-<div class="qb" onclick="setRange('month')">이번 달</div>
+<div class="qb" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb on" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
 
@@ -297,7 +297,7 @@ function toggleIssue(idx){
   else{row.classList.add('open');icon.classList.add('open')}
 }
 
-(function(){var lw=getLastWeek();document.getElementById('dateFrom').value=lw.from;document.getElementById('dateTo').value=lw.to;loadData()})();
+(function(){var now=new Date();var f=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';var t=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('dateFrom').value=f;document.getElementById('dateTo').value=t;loadData()})();
 </script>
 </body>
 </html>
