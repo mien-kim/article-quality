@@ -1,284 +1,255 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>경향 영문기사 품질 대시보드</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Kyunghyang English - 영문 기사 품질 분석</title>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.1.2/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highcharts@12.1.2/modules/accessibility.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--bg:#1a1d23;--bg2:#22262e;--surface:#2a2f38;--border:#353a44;--text:#e4e7ec;--accent:#4fc3f7;--accent-dim:rgba(79,195,247,0.12)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-/* NAV */
-.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0.7rem 1.5rem;display:flex;align-items:center;flex-wrap:wrap;gap:0.8rem}
-.nav-brand{display:flex;align-items:center;gap:0.6rem;margin-right:auto}
-.nav-brand .flask{font-size:1.4rem;color:var(--accent)}
-.nav-brand .titles{display:flex;flex-direction:column}
-.nav-brand .main-t{font-weight:700;font-size:1rem;color:var(--text)}
-.nav-brand .sub-t{font-size:0.7rem;color:#888;margin-top:1px}
-.nav-menu{display:flex;gap:0.4rem;flex-wrap:wrap}
-.nav-btn{padding:0.45rem 1rem;border-radius:8px;font-size:0.82rem;font-weight:500;color:#aaa;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all 0.2s;text-decoration:none}
-.nav-btn:hover{border-color:var(--accent);color:var(--text)}
-.nav-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
-/* MAIN */
-.container{max-width:1400px;margin:0 auto;padding:1.5rem}
-h1{font-size:1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem}
-/* DATE FILTER */
-.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap}
-.filter-bar label{font-size:0.82rem;color:#aaa}
-.filter-bar input[type=date]{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:0.4rem 0.6rem;border-radius:6px;font-size:0.82rem}
-.filter-bar .btn{padding:0.4rem 0.9rem;border-radius:6px;font-size:0.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text);transition:all 0.2s}
-.filter-bar .btn:hover{border-color:var(--accent);color:var(--accent)}
-.filter-bar .btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
-.quick-btns{display:flex;gap:0.4rem}
-/* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.1rem;text-align:center}
-.kpi-card .value{font-size:1.7rem;font-weight:700;color:var(--accent)}
-.kpi-card .label{font-size:0.78rem;color:#888;margin-top:0.3rem}
-/* CHARTS */
-.charts-row{display:grid;grid-template-columns:1fr 1.6fr;gap:1rem;margin-bottom:1.5rem}
-.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;min-height:300px}
-/* TABLE */
-.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.table-wrap table{width:100%;border-collapse:collapse;font-size:0.85rem}
-.table-wrap th{background:var(--bg2);padding:0.75rem 0.8rem;text-align:left;font-weight:600;color:#aaa;font-size:0.78rem;border-bottom:1px solid var(--border)}
-.table-wrap td{padding:0.7rem 0.8rem;border-bottom:1px solid var(--border);vertical-align:top}
-.table-wrap tr:hover{background:rgba(79,195,247,0.04)}
-.badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
-.badge-high{background:rgba(74,222,128,0.15);color:#4ade80}
-.badge-mid{background:rgba(251,191,36,0.15);color:#fbbf24}
-.badge-low{background:rgba(248,113,113,0.15);color:#f87171}
-.chevron{cursor:pointer;transition:transform 0.2s;color:#666}
-.chevron.open{transform:rotate(90deg);color:var(--accent)}
-.detail-row{display:none;background:var(--bg2)}
-.detail-row.show{display:table-row}
-.detail-content{padding:1rem 1.5rem}
-.issue-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.8rem;margin-bottom:0.6rem}
-.issue-item .desc{font-weight:600;margin-bottom:0.4rem;color:var(--text)}
-.issue-item .before-after{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:start;font-size:0.82rem}
-.issue-item .ba-label{font-size:0.7rem;color:#888;margin-bottom:0.2rem}
-.issue-item .arrow{color:var(--accent);padding-top:1rem}
-.issue-item .ba-box{background:var(--surface);padding:0.5rem 0.7rem;border-radius:6px;font-size:0.82rem;word-break:break-all}
-/* FOOTER */
-.footer{text-align:center;padding:2rem;font-size:0.78rem;color:#666;border-top:1px solid var(--border);margin-top:2rem}
-.footer a{color:var(--accent)}
-/* RESPONSIVE */
-@media(max-width:700px){
-.charts-row{grid-template-columns:1fr}
-.nav{padding:0.5rem 0.8rem}
-.nav-menu{width:100%;justify-content:center}
-.container{padding:1rem 0.7rem}
-.kpi-row{grid-template-columns:repeat(2,1fr)}
-.filter-bar{flex-direction:column;align-items:stretch}
-.table-wrap{overflow-x:auto}
-}
+:root{--bg:#1a1a2e;--bg2:#16213e;--border:#2a3a5e;--text:#e8e8e8;--text2:#a8b2c1;--text3:#6b7a8d;--accent:#4fc3f7;--green:#66bb6a;--yellow:#fdd835;--orange:#ff9800;--red:#ef5350;--purple:#ce93d8}
+*{box-sizing:border-box}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);margin:0;padding:24px 32px;font-size:16px;line-height:1.6}
+.nav{margin-bottom:20px}
+.nav a{color:var(--accent);text-decoration:none;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.nav a:hover{text-decoration:underline}
+h1{font-size:26px;font-weight:700;margin:0 0 4px}
+h1 i{color:var(--accent);margin-right:8px}
+.sub{color:var(--text3);font-size:14px;margin-bottom:20px}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
+.controls label{font-size:12px;color:var(--text3)}
+.controls input[type=date],.controls select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px}
+.controls button{background:var(--accent);color:#000;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.controls button:hover{background:#81d4fa}
+.quick-btns{display:flex;gap:6px}
+.qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2)}
+.qb.on{background:rgba(79,195,247,0.15);color:var(--accent);border-color:rgba(79,195,247,0.4)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.kpi-l{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3)}
+.kpi-v{font-size:26px;font-weight:700;font-family:'SF Mono',Consolas,monospace;margin:3px 0}
+.kpi-s{font-size:12px;color:var(--text2)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.c{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.tbl-wrap{max-height:550px;overflow-y:auto;border-radius:10px;background:var(--bg2);border:1px solid var(--border);padding:14px}
+table.m{width:100%;border-collapse:collapse;font-size:13px}
+table.m th{text-align:left;color:var(--text3);font-weight:500;padding:9px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;position:sticky;top:0;background:var(--bg2);z-index:1}
+table.m td{padding:9px;border-bottom:1px solid rgba(42,58,94,0.5);vertical-align:top}
+table.m tr:hover td{background:rgba(79,195,247,0.05)}
+.badge{display:inline-block;padding:3px 8px;border-radius:10px;font-weight:700;font-size:12px;font-family:'SF Mono',Consolas,monospace}
+.b-h{background:rgba(102,187,106,0.2);color:var(--green)}
+.b-m{background:rgba(253,216,53,0.2);color:var(--yellow)}
+.b-w{background:rgba(255,152,0,0.2);color:var(--orange)}
+.b-l{background:rgba(239,83,80,0.2);color:var(--red)}
+a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
+.loading{text-align:center;padding:50px;color:var(--text3);font-size:14px}
+.empty{text-align:center;padding:40px;color:var(--text3)}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+
+@media(max-width:700px){}
+
+
+.row-clickable{cursor:pointer}
+.row-clickable:hover td{background:rgba(79,195,247,0.08)}
+.issue-row{display:none}
+.issue-row.open{display:table-row}
+.issue-row td{padding:12px 16px;background:rgba(79,195,247,0.03);border-left:3px solid var(--accent)}
+.issue-detail{font-size:13px;line-height:1.8}
+.issue-item-d{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(42,58,94,0.3)}
+.issue-item-d:last-child{border-bottom:none;margin-bottom:0}
+.issue-sev{display:inline-block;margin-right:6px}
+.issue-cat{color:var(--text2);font-size:12px}
+.issue-ba{margin:4px 0 0 20px;font-size:12px;color:var(--text2)}
+.issue-ba strong{color:var(--text)}
+.no-issues{color:var(--text3);font-style:italic;font-size:12px}
+.expand-icon{color:var(--text3);font-size:11px;transition:transform 0.2s}
+.expand-icon.open{transform:rotate(90deg)}
+
+.top-nav{display:flex;align-items:center;gap:16px;padding:12px 24px;background:rgba(15,15,26,0.97);border-bottom:1px solid rgba(255,255,255,0.06);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.nav-brand{font-size:14px;font-weight:700;color:#f0f0f5;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.nav-brand i{color:#6c8cff;font-size:16px}
+.nav-brand span{font-size:11px;color:#6060a0;margin-left:4px}
+.nav-menu{display:flex;gap:6px}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;color:#a0a0c0;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
+.nav-btn:hover{background:rgba(255,255,255,0.08);color:#f0f0f5;border-color:rgba(255,255,255,0.12)}
+.nav-btn.active-kh{background:rgba(79,195,247,0.12);color:#4fc3f7;border-color:rgba(79,195,247,0.3)}
+.nav-btn.active-kc{background:rgba(167,139,250,0.12);color:#a78bfa;border-color:rgba(167,139,250,0.3)}
+.nav-btn.active-std{background:rgba(74,222,128,0.12);color:#4ade80;border-color:rgba(74,222,128,0.3)}
+.nav-btn.active-at{background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.3)}
+@media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-menu{flex-wrap:wrap}}
+
 </style>
 </head>
 <body>
-<nav class="nav">
-<div class="nav-brand">
-<i class="fas fa-flask flask"></i>
-<div class="titles">
-<span class="main-t">경향신문 AI Newsroom Lab</span>
-<span class="sub-t">Amazon Quick 실험실</span>
-</div>
-</div>
-<div class="nav-menu">
-<a href="kyunghyang-english.html" class="nav-btn active" style="--accent:#4fc3f7;background:rgba(79,195,247,0.12);border-color:#4fc3f7;color:#4fc3f7">경향 영문</a>
-<a href="k-culture.html" class="nav-btn">K-Culture</a>
-<a href="editorial-standards.html" class="nav-btn">편집기준</a>
-<a href="auto-translate.html" class="nav-btn">자동번역</a>
-</div>
+<nav class="top-nav">
+  <a href="index.html" class="nav-brand">
+    <i class="fa-solid fa-flask"></i>
+    경향신문 AI Newsroom Lab
+    <span>Amazon Quick 실험실</span>
+  </a>
+  <div class="nav-menu">
+    <a href="kyunghyang-english.html" class="nav-btn active-kh"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
+    <a href="k-culture.html" class="nav-btn"><i class="fa-solid fa-film"></i> K-Culture</a>
+    <a href="editorial-standards.html" class="nav-btn"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
+    <a href="auto-translate.html" class="nav-btn"><i class="fa-solid fa-language"></i> Auto Translate</a>
+  </div>
 </nav>
-<div class="container">
-<h1><i class="fas fa-globe" style="color:var(--accent)"></i> 경향 영문기사 품질 대시보드</h1>
-<div class="filter-bar">
-<label>시작일</label><input type="date" id="startDate">
-<label>종료일</label><input type="date" id="endDate">
-<button class="btn primary" onclick="applyFilter()">조회</button>
+
+<h1><i class="fa-solid fa-globe"></i>Kyunghyang English</h1>
+<p class="sub">영문 기사 품질 분석 · FK Grade · 문장 구조 · 문화적 접근성 | Supabase 실시간 조회</p>
+
+<div class="controls">
+<label>시작일</label><input type="date" id="dateFrom">
+<label>종료일</label><input type="date" id="dateTo">
+<button onclick="loadData()">조회</button>
 <div class="quick-btns">
-<button class="btn" onclick="setQuick('today')">오늘</button>
-<button class="btn" onclick="setQuick('week')">이번주</button>
-<button class="btn" onclick="setQuick('lastweek')">지난주</button>
-<button class="btn" onclick="setQuick('month')">이번달</button>
+<div class="qb" onclick="setRange('today')">오늘</div>
+<div class="qb" onclick="setRange('week')">이번 주</div>
+<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
-<div class="kpi-row">
-<div class="kpi-card"><div class="value" id="kTotal">-</div><div class="label">분석 기사(건)</div></div>
-<div class="kpi-card"><div class="value" id="kAvgScore">-</div><div class="label">평균 점수(/100)</div></div>
-<div class="kpi-card"><div class="value" id="kAvgFK">-</div><div class="label">평균 FK(목표 8~12)</div></div>
-<div class="kpi-card"><div class="value" id="kAbove70">-</div><div class="label">70점 이상</div></div>
-<div class="kpi-card"><div class="value" id="kBelow60">-</div><div class="label">게시보류(&lt;60점)</div></div>
+
+<div class="kpis">
+<div class="kpi"><div class="kpi-l">분석 기사</div><div class="kpi-v" id="k-count">-</div><div class="kpi-s">건</div></div>
+<div class="kpi"><div class="kpi-l">평균 점수</div><div class="kpi-v" id="k-avg">-</div><div class="kpi-s">/100</div></div>
+<div class="kpi"><div class="kpi-l">평균 FK</div><div class="kpi-v" id="k-fk">-</div><div class="kpi-s">목표 8~12</div></div>
+<div class="kpi"><div class="kpi-l">70점 이상</div><div class="kpi-v" id="k-pass">-</div><div class="kpi-s" id="k-pass-pct"></div></div>
+<div class="kpi"><div class="kpi-l">게시보류</div><div class="kpi-v" id="k-hold">-</div><div class="kpi-s">&lt;60점</div></div>
 </div>
-<div class="charts-row">
-<div class="chart-box" id="chartDonut"></div>
-<div class="chart-box" id="chartTrend"></div>
+
+<div class="g2">
+<div class="c"><div id="chart-dist" style="height:220px"></div></div>
+<div class="c"><div id="chart-daily" style="height:220px"></div></div>
 </div>
-<div class="table-wrap">
-<table id="mainTable">
-<thead><tr><th></th><th>점수</th><th>제목 / 기자</th><th>FK</th><th>날짜</th><th>링크</th></tr></thead>
-<tbody id="tableBody"></tbody>
+
+<div class="tbl-wrap">
+<table class="m">
+<thead><tr><th></th><th>점수</th><th>제목 / 기자</th><th>FK</th><th>날짜</th><th>링크</th><th style="min-width:280px">이슈 및 개선사항</th></tr></thead>
+<tbody id="tbl"></tbody>
 </table>
 </div>
-</div>
-<footer class="footer">Made by mien.kim · Powered by Amazon Quick · <a href="https://github.com/mien-kim/article-quality" target="_blank">GitHub</a></footer>
+
+<div class="loading" id="loading" style="display:none">데이터 로딩 중...</div>
+<div class="empty" id="empty" style="display:none">선택한 기간에 데이터가 없습니다.</div>
 
 <script>
-var SUPABASE_KEY='sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 var SUPABASE_URL='https://wwaflpepyrlfdcxvtscp.supabase.co';
-var headers={'apikey':SUPABASE_KEY};
-
-function cleanText(t){
-if(!t)return '';
-t=String(t);
-t=t.replace(/기저/g,'기준');
-t=t.replace(/젥문/g,'장문');
-t=t.replace(/잡문/g,'장문');
-t=t.replace(/놙음/g,'높음');
-t=t.replace(/놙/g,'높');
-t=t.replace(/랏랏랏동해얀/g,'');
-t=t.replace(/랏/g,'·');
-t=t.replace(/Â°/g,'°');
-t=t.replace(/â€"/g,'—');
-t=t.replace(/â€™/g,"'");
-t=t.replace(/â€œ/g,'"');
-t=t.replace(/â€\u009d/g,'"');
-return t.trim();
-}
-
-function getWeekRange(){
-var now=new Date(),day=now.getDay(),diff=now.getDate()-day+(day===0?-6:1);
-var mon=new Date(now);mon.setDate(diff);mon.setHours(0,0,0,0);
-var sun=new Date(mon);sun.setDate(mon.getDate()+6);
-return{start:fmt(mon),end:fmt(sun)};
-}
-function fmt(d){return d.toISOString().slice(0,10)}
-function setQuick(p){
-var now=new Date(),s,e;
-if(p==='today'){s=e=fmt(now)}
-else if(p==='week'){var r=getWeekRange();s=r.start;e=r.end}
-else if(p==='lastweek'){var r=getWeekRange();var ls=new Date(r.start);ls.setDate(ls.getDate()-7);var le=new Date(r.start);le.setDate(le.getDate()-1);s=fmt(ls);e=fmt(le)}
-else if(p==='month'){s=fmt(new Date(now.getFullYear(),now.getMonth(),1));e=fmt(now)}
-document.getElementById('startDate').value=s;
-document.getElementById('endDate').value=e;
-applyFilter();
-}
-
+var SUPABASE_KEY='sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 var allData=[];
-async function fetchData(){
-var s=document.getElementById('startDate').value;
-var e=document.getElementById('endDate').value;
-var url=SUPABASE_URL+'/rest/v1/english_article_quality?source=eq.kh&select=*&order=created_at.desc';
-if(s)url+='&created_at=gte.'+s+'T00:00:00';
-if(e)url+='&created_at=lte.'+e+'T23:59:59';
-var resp=await fetch(url,{headers:headers});
-allData=await resp.json();
-render();
+
+function cleanText(str){
+  if(!str)return '';
+  return str
+    .replace(/기저/g,'기준').replace(/젥문/g,'장문').replace(/잡문/g,'장문')
+    .replace(/놙음/g,'높음').replace(/놙/g,'높')
+    .replace(/럏럏럏동해얀/g,'').replace(/럏/g,'·')
+    .replace(/Â°/g,'°').replace(/â€"/g,'—').replace(/â€\u0094/g,'—').replace(/\\u00e2\\u0080\\u0094/g,'—');
 }
 
-function applyFilter(){fetchData()}
+function fmt(d){return d.toISOString().split('T')[0]}
+function getLastWeek(){var now=new Date(),day=now.getDay()||7;var m=new Date(now);m.setDate(now.getDate()-day-6);var s=new Date(m);s.setDate(m.getDate()+6);return{from:fmt(m),to:fmt(s)}}
+
+function setRange(r){
+  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
+  event.target.classList.add('on');
+  var now=new Date(),f,t;
+  if(r==='today'){f=t=fmt(now)}
+  else if(r==='week'){var d=now.getDay()||7;f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1));t=fmt(now)}
+  else if(r==='lastweek'){var lw=getLastWeek();f=lw.from;t=lw.to}
+  else if(r==='month'){f=fmt(new Date(now.getFullYear(),now.getMonth(),1));t=fmt(now)}
+  document.getElementById('dateFrom').value=f;
+  document.getElementById('dateTo').value=t;
+  loadData();
+}
+
+async function loadData(){
+  var from=document.getElementById('dateFrom').value;
+  var to=document.getElementById('dateTo').value;
+  if(!from||!to)return;
+  document.getElementById('loading').style.display='block';
+  document.getElementById('tbl').innerHTML='';
+  var url=SUPABASE_URL+'/rest/v1/english_article_quality?select=*&source=eq.kh&published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc';
+  try{var r=await fetch(url,{headers:{'apikey':SUPABASE_KEY}});allData=await r.json()}catch(e){allData=[]}
+  document.getElementById('loading').style.display='none';
+  document.getElementById('empty').style.display=allData.length?'none':'block';
+  render();
+}
 
 function render(){
-var data=allData;
-var total=data.length;
-var scores=data.map(d=>d.score||0);
-var fks=data.map(d=>d.fk_score||d.fk_grade_level||0);
-var avg=total?Math.round(scores.reduce((a,b)=>a+b,0)/total*10)/10:0;
-var avgFK=total?Math.round(fks.reduce((a,b)=>a+b,0)/total*10)/10:0;
-var above70=scores.filter(s=>s>=70).length;
-var below60=scores.filter(s=>s<60).length;
-document.getElementById('kTotal').textContent=total;
-document.getElementById('kAvgScore').textContent=avg;
-document.getElementById('kAvgFK').textContent=avgFK;
-document.getElementById('kAbove70').textContent=above70;
-document.getElementById('kBelow60').textContent=below60;
+  if(!allData.length){['k-count','k-avg','k-fk','k-pass','k-hold'].forEach(function(id){document.getElementById(id).textContent='-'});return}
+  var avg=Math.round(allData.reduce(function(s,d){return s+d.score},0)/allData.length*10)/10;
+  var fk=Math.round(allData.reduce(function(s,d){return s+(d.fk_grade||0)},0)/allData.length*10)/10;
+  var pass=allData.filter(function(d){return d.score>=70}).length;
+  var hold=allData.filter(function(d){return d.score<60}).length;
+  document.getElementById('k-count').textContent=allData.length;
+  document.getElementById('k-avg').textContent=avg;
+  document.getElementById('k-avg').style.color=avg>=75?'#66bb6a':avg>=65?'#fdd835':'#ef5350';
+  document.getElementById('k-fk').textContent=fk;
+  document.getElementById('k-fk').style.color=fk<=12?'#66bb6a':fk<=14?'#ff9800':'#ef5350';
+  document.getElementById('k-pass').textContent=pass;
+  document.getElementById('k-pass-pct').textContent=Math.round(pass/allData.length*100)+'%';
+  document.getElementById('k-hold').textContent=hold;
 
-// Donut
-var bands=[{name:'90~100',y:scores.filter(s=>s>=90).length,color:'#4ade80'},{name:'70~89',y:scores.filter(s=>s>=70&&s<90).length,color:'#4fc3f7'},{name:'60~69',y:scores.filter(s=>s>=60&&s<70).length,color:'#fbbf24'},{name:'<60',y:scores.filter(s=>s<60).length,color:'#f87171'}];
-Highcharts.chart('chartDonut',{chart:{type:'pie',backgroundColor:'transparent'},title:{text:'점수 분포',style:{color:'#e4e7ec',fontSize:'14px'}},plotOptions:{pie:{innerSize:'55%',dataLabels:{enabled:true,format:'{point.name}: {point.y}건',style:{color:'#ccc',fontSize:'11px'}}}},series:[{name:'건수',data:bands}],credits:{enabled:false}});
+  // Pie
+  var dist=[0,0,0,0];
+  allData.forEach(function(d){if(d.score>=80)dist[0]++;else if(d.score>=70)dist[1]++;else if(d.score>=60)dist[2]++;else dist[3]++});
+  Highcharts.chart('chart-dist',{chart:{type:'pie',backgroundColor:'transparent'},title:{text:'품질 분포',style:{fontSize:'14px',color:'#e8e8e8'}},plotOptions:{pie:{innerSize:'45%',dataLabels:{format:'<b>{point.name}</b> {point.y}건',style:{fontSize:'11px',color:'#a8b2c1',textOutline:'none'}}}},series:[{data:[{name:'우수80+',y:dist[0],color:'#66bb6a'},{name:'양호70-79',y:dist[1],color:'#fdd835'},{name:'개선60-69',y:dist[2],color:'#ff9800'},{name:'보류<60',y:dist[3],color:'#ef5350'}]}],credits:{enabled:false}});
 
-// Daily trend
-var daily={};
-data.forEach(function(d){
-var day=(d.created_at||'').slice(0,10);
-if(!day)return;
-if(!daily[day])daily[day]={sum:0,cnt:0};
-daily[day].sum+=(d.score||0);
-daily[day].cnt++;
-});
-var days=Object.keys(daily).sort();
-var avgSeries=days.map(function(k){return Math.round(daily[k].sum/daily[k].cnt*10)/10});
-var cntSeries=days.map(function(k){return daily[k].cnt});
-Highcharts.chart('chartTrend',{chart:{backgroundColor:'transparent'},title:{text:'일별 추이',style:{color:'#e4e7ec',fontSize:'14px'}},xAxis:{categories:days,labels:{style:{color:'#888',fontSize:'10px'},rotation:-45}},yAxis:[{title:{text:'평균 점수',style:{color:'#4fc3f7'}},labels:{style:{color:'#888'}}},{title:{text:'건수',style:{color:'#a78bfa'}},opposite:true,labels:{style:{color:'#888'}}}],series:[{name:'평균 점수',type:'line',data:avgSeries,color:'#4fc3f7'},{name:'건수',type:'column',yAxis:1,data:cntSeries,color:'rgba(167,139,250,0.5)'}],legend:{itemStyle:{color:'#aaa'}},credits:{enabled:false}});
+  // Daily
+  var daily={};allData.forEach(function(d){var day=d.published_at?d.published_at.split('T')[0]:'?';if(!daily[day])daily[day]={sum:0,cnt:0};daily[day].sum+=d.score;daily[day].cnt++});
+  var days=Object.keys(daily).sort();
+  Highcharts.chart('chart-daily',{chart:{backgroundColor:'transparent'},title:{text:'일별 추이',style:{fontSize:'14px',color:'#e8e8e8'}},xAxis:{categories:days.map(function(d){return d.slice(5)}),labels:{style:{color:'#6b7a8d'}},lineColor:'#2a3a5e'},yAxis:[{title:{text:null},min:50,max:90,gridLineColor:'#2a3a5e',labels:{style:{color:'#6b7a8d'}}},{title:{text:null},opposite:true,gridLineColor:'transparent',labels:{style:{color:'#6b7a8d'}}}],series:[{name:'평균',type:'spline',data:days.map(function(d){return Math.round(daily[d].sum/daily[d].cnt*10)/10}),color:'#4fc3f7',lineWidth:2.5},{name:'건수',type:'column',data:days.map(function(d){return daily[d].cnt}),color:'rgba(79,195,247,0.25)',yAxis:1}],legend:{itemStyle:{color:'#a8b2c1'}},credits:{enabled:false}});
 
-// Table
-var tbody=document.getElementById('tableBody');
-tbody.innerHTML='';
-data.forEach(function(d,i){
-var sc=d.score||0;
-var cls=sc>=70?'badge-high':sc>=60?'badge-mid':'badge-low';
-var title=cleanText(d.title||d.headline||'');
-var writer=cleanText(d.writer||d.author||'');
-var fk=d.fk_score||d.fk_grade_level||'-';
-var date=(d.created_at||'').slice(0,10);
-var link=d.url||d.article_url||'#';
-var tr=document.createElement('tr');
-tr.style.cursor='pointer';
-tr.innerHTML='<td><i class="fas fa-chevron-right chevron" id="chev'+i+'"></i></td><td><span class="badge '+cls+'">'+sc+'</span></td><td><strong>'+title+'</strong><br><span style="color:#888;font-size:0.78rem">'+writer+'</span></td><td>'+fk+'</td><td>'+date+'</td><td><a href="'+link+'" target="_blank">원문</a></td>';
-tr.onclick=function(){toggleDetail(i,d)};
-tbody.appendChild(tr);
-var dr=document.createElement('tr');
-dr.className='detail-row';
-dr.id='detail'+i;
-dr.innerHTML='<td colspan="6"><div class="detail-content" id="detailContent'+i+'">로딩중...</div></td>';
-tbody.appendChild(dr);
-});
+  // Table
+  var html='';
+  allData.forEach(function(d,idx){
+    var cls=d.score>=80?'b-h':d.score>=70?'b-m':d.score>=60?'b-w':'b-l';
+    var dt=d.published_at?d.published_at.slice(5,16).replace('T',' '):'';
+    var issues=d.issues||[];
+    if(typeof issues==='string'){try{issues=JSON.parse(issues)}catch(e){issues=[]}}
+    var hasIssues=issues.length>0||(d.fk_grade>14)||(d.score<70);
+    // Build issue summary for column
+    var issueSummary='';
+    issues.forEach(function(iss){
+      var desc=cleanText(iss.description||iss.type||iss.category||'');
+      var before=cleanText(iss.before||iss.context||'');
+      var after=cleanText(iss.after||iss.replacement||'');
+      issueSummary+='<div style="margin-bottom:6px"><strong style="color:#fdd835;font-size:11px">['+(iss.type||iss.category||'이슈')+']</strong> <span style="font-size:12px;color:#a8b2c1">'+desc+'</span>';
+      if(before) issueSummary+='<br><span style="font-size:11px;color:#6b7a8d">Before: '+before.slice(0,80)+'</span>';
+      if(after) issueSummary+='<br><span style="font-size:11px;color:#66bb6a">After: '+after.slice(0,80)+'</span>';
+      issueSummary+='</div>';
+    });
+    if(!issueSummary && hasIssues) issueSummary='<span style="font-size:11px;color:#6b7a8d">점수/FK 기반 이슈 (상세 클릭)</span>';
+    if(!issueSummary) issueSummary='<span style="font-size:11px;color:#4ade80">✓ 양호</span>';
+    html+='<tr class="row-clickable" onclick="toggleIssue('+idx+')"><td><i class="fa-solid fa-chevron-right expand-icon" id="exp-'+idx+'"></i></td><td><span class="badge '+cls+'">'+d.score+'</span></td><td><span style="font-size:13px">'+d.title.slice(0,55)+'</span><br><span style="font-size:11px;color:#6b7a8d">'+(d.byline||'')+'</span></td><td style="font-family:monospace;color:'+(d.fk_grade<=12?'#66bb6a':d.fk_grade>14?'#ef5350':'#ff9800')+'">'+d.fk_grade+'</td><td style="font-size:12px;color:#6b7a8d;white-space:nowrap">'+dt+'</td><td><a class="lnk" href="'+d.url+'" target="_blank" onclick="event.stopPropagation()">원문</a></td><td style="font-size:12px;max-width:300px">'+issueSummary+'</td></tr>';
+    // Issue detail row
+    var issueHtml='';
+    if(d.fk_grade>14) issueHtml+='<div class="issue-item-d"><span class="issue-sev">🟠</span><span class="issue-cat">가독성</span><div class="issue-ba"><strong>이슈:</strong> FK Grade '+d.fk_grade+' (목표 8~12 초과)</div><div class="issue-ba"><strong>개선:</strong> 긴 문장을 분리하고 어려운 단어를 쉬운 표현으로 교체</div></div>';
+    if(d.score<60) issueHtml+='<div class="issue-item-d"><span class="issue-sev">🔴</span><span class="issue-cat">게시보류 권장</span><div class="issue-ba"><strong>이슈:</strong> 전체 점수 '+d.score+'점 (60점 미만)</div><div class="issue-ba"><strong>개선:</strong> 헤드라인, 문장 구조, 문화적 접근성 전반 개선 필요</div></div>';
+    else if(d.score<70) issueHtml+='<div class="issue-item-d"><span class="issue-sev">🟡</span><span class="issue-cat">개선 필요</span><div class="issue-ba"><strong>이슈:</strong> 전체 점수 '+d.score+'점 (70점 미만)</div><div class="issue-ba"><strong>개선:</strong> 헤드라인 길이, 문장 구조 점검 권장</div></div>';
+    issues.forEach(function(iss){
+      var sev=iss.severity==='critical'?'🔴':iss.severity==='warning'?'🟠':'🟡';
+      issueHtml+='<div class="issue-item-d"><span class="issue-sev">'+sev+'</span><span class="issue-cat">'+(iss.type||iss.category||'')+'</span>'+(iss.description?'<span style="margin-left:6px;font-size:12px;color:#a8b2c1">'+iss.description+'</span>':'');
+      if(iss.before||iss.context) issueHtml+='<div class="issue-ba"><strong>Before:</strong> '+cleanText(iss.before||iss.context||'')+'</div>';
+      if(iss.after||iss.replacement) issueHtml+='<div class="issue-ba"><strong>After:</strong> '+cleanText(iss.after||iss.replacement||'')+'</div>';
+      issueHtml+='</div>';
+    });
+    if(!issueHtml) issueHtml='<span class="no-issues">이슈 없음 — 양호</span>';
+    html+='<tr class="issue-row" id="issue-'+idx+'"><td colspan="7"><div class="issue-detail">'+issueHtml+'</div></td></tr>';
+  });
+  document.getElementById('tbl').innerHTML=html;
 }
 
-async function toggleDetail(i,d){
-var dr=document.getElementById('detail'+i);
-var chev=document.getElementById('chev'+i);
-if(dr.classList.contains('show')){dr.classList.remove('show');chev.classList.remove('open');return}
-chev.classList.add('open');dr.classList.add('show');
-var cont=document.getElementById('detailContent'+i);
-// Fetch issues
-var issues=[];
-if(d.id){
-var url=SUPABASE_URL+'/rest/v1/english_article_issues?article_id=eq.'+d.id+'&select=*';
-var resp=await fetch(url,{headers:headers});
-if(resp.ok)issues=await resp.json();
-}
-// Auto-generate issues
-var autoIssues=[];
-var fk=d.fk_score||d.fk_grade_level||0;
-var sc=d.score||0;
-if(fk>14)autoIssues.push({description:'FK 지수가 '+fk+'로 목표 범위(8~12)를 초과합니다. 문장을 짧게 분리하세요.',before:'FK = '+fk,after:'목표: 8~12'});
-if(sc<60)autoIssues.push({description:'점수가 60점 미만으로 게시보류 대상입니다.',before:'Score = '+sc,after:'최소 60점 이상 필요'});
-else if(sc<70)autoIssues.push({description:'점수가 70점 미만입니다. 개선 권고.',before:'Score = '+sc,after:'70점 이상 권장'});
 
-var allIssues=issues.concat(autoIssues);
-if(allIssues.length===0){cont.innerHTML='<p style="color:#888">이슈 없음</p>';return}
-var html='';
-allIssues.forEach(function(iss){
-var before=cleanText(iss.before||iss.context||'');
-var after=cleanText(iss.after||iss.replacement||'');
-var desc=cleanText(iss.description||'');
-html+='<div class="issue-item"><div class="desc">'+desc+'</div>';
-if(before||after){
-html+='<div class="before-after"><div><div class="ba-label">Before</div><div class="ba-box">'+before+'</div></div><div class="arrow"><i class="fas fa-arrow-right"></i></div><div><div class="ba-label">After</div><div class="ba-box">'+after+'</div></div></div>';
-}
-html+='</div>';
-});
-cont.innerHTML=html;
+function toggleIssue(idx){
+  var row=document.getElementById('issue-'+idx);
+  var icon=document.getElementById('exp-'+idx);
+  if(row.classList.contains('open')){row.classList.remove('open');icon.classList.remove('open')}
+  else{row.classList.add('open');icon.classList.add('open')}
 }
 
-// Init
-(function(){
-setQuick('week');
-})();
+(function(){var lw=getLastWeek();document.getElementById('dateFrom').value=lw.from;document.getElementById('dateTo').value=lw.to;loadData()})();
 </script>
 </body>
 </html>
