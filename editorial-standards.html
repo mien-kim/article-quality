@@ -2,75 +2,17 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>경향 보도 기준 - 국문 기사 검수 대시보드</title>
+<title>경향 보도 기준 — 국문 기사 검수</title>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.1.2/highcharts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highcharts@12.1.2/modules/accessibility.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--bg:#1a1d23;--bg2:#22262e;--surface:#2a2f38;--border:#353a44;--border-l:#2e333d;--text:#e4e7ec;--text2:#a1a8b8;--text3:#6b7385;--primary:#4ade80;--error:#f87171;--warning:#fbbf24;--orange:#fb923c;--radius:8px}
+:root{--bg:#1a1d23;--bg2:#22262e;--surface:#2a2f38;--border:#353a44;--border-l:#2e333d;--text:#e4e7ec;--text2:#a1a8b8;--text3:#6b7385;--primary:#4ade80;--error:#f87171;--warning:#fbbf24;--orange:#fb923c;--cat-style:#5b9ef4;--cat-gender:#f87171;--cat-spell:#fbbf24;--radius:8px}
 *{box-sizing:border-box}
 body{background:var(--bg);margin:0;padding:24px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text);font-size:15px;line-height:1.6}
-.nav{margin-bottom:20px}
-.nav a{color:var(--primary);text-decoration:none;font-size:14px;display:inline-flex;align-items:center;gap:6px}
-.nav a:hover{text-decoration:underline}
 h1{font-size:24px;font-weight:700;margin:0 0 4px}
 h1 i{color:var(--primary);margin-right:8px}
 .subtitle{color:var(--text3);font-size:13px;margin-bottom:24px}
-
-
-
-
-
-
-
-
-
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:16px}
-.card-label{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
-.card-value{font-size:28px;font-weight:700;font-family:'SF Mono',Consolas,monospace}
-.card-delta{font-size:12px;margin-top:4px}
-.card-delta.positive{color:var(--primary)}
-.card-delta.negative{color:var(--error)}
-.scoring-panel{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
-.scoring-header{display:flex;align-items:center;gap:8px;padding:14px 20px;cursor:pointer;user-select:none;transition:background 0.15s}
-.scoring-header:hover{background:var(--surface)}
-.scoring-header .chart-title{margin:0;font-size:14px;font-weight:600}
-.scoring-chevron{transition:transform 0.25s ease;color:var(--text3);font-size:12px;margin-left:auto}
-.scoring-chevron.open{transform:rotate(180deg)}
-.scoring-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 20px}
-.scoring-body.open{max-height:420px;padding:0 20px 20px}
-.formula-box{background:var(--surface);border:1px solid var(--border-l);border-radius:6px;padding:12px 18px;font-family:'SF Mono',Consolas,monospace;font-size:14px;font-weight:600;text-align:center;margin-bottom:16px;color:var(--primary)}
-.scoring-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.scoring-table{width:100%;border-collapse:collapse;font-size:12px}
-.scoring-table th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text3);font-size:10px;text-transform:uppercase}
-.scoring-table td{padding:6px 8px;border-bottom:1px solid var(--border-l)}
-.grade-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13px}
-.grade-bar{height:6px;border-radius:3px;opacity:0.4}
-.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px}
-.chart-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
-.chart-title{font-size:14px;font-weight:600;margin-bottom:10px}
-.top-issues{margin-top:8px}
-.issue-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-l);font-size:13px}
-.issue-count{font-family:'SF Mono',Consolas,monospace;font-weight:600;min-width:28px;text-align:right;color:var(--text2)}
-.table-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;color:var(--text3);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase}
-td{padding:8px 10px;border-bottom:1px solid var(--border-l)}
-tr:hover td{background:var(--surface)}
-td.issue-detail{padding:10px;line-height:1.6}
-td.issue-detail .issue-line{margin-bottom:6px}
-td.issue-detail .before-after{font-size:12px;color:var(--text2);margin-left:18px}
-td.issue-detail .before-after strong{color:var(--text)}
-.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:500}
-.badge-green{background:rgba(74,222,128,0.12);color:var(--primary)}
-.badge-yellow{background:rgba(251,191,36,0.12);color:var(--warning)}
-.badge-orange{background:rgba(251,146,60,0.12);color:var(--orange)}
-.badge-red{background:rgba(248,113,113,0.12);color:var(--error)}
-.score{font-family:'SF Mono',Consolas,monospace;font-weight:600}
-.loading{text-align:center;padding:50px;color:var(--text3)}
-.empty{text-align:center;padding:40px;color:var(--text3)}
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.scoring-grid{grid-template-columns:1fr}}
 
 .top-nav{display:flex;align-items:center;gap:24px;padding:12px 20px;background:rgba(15,15,26,0.95);border-bottom:1px solid rgba(255,255,255,0.08);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
 .nav-logo{color:#f0f0f5;text-decoration:none;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
@@ -78,9 +20,57 @@ td.issue-detail .before-after strong{color:var(--text)}
 .nav-links{display:flex;gap:4px;margin-left:auto}
 .nav-link{color:#a0a0c0;text-decoration:none;font-size:13px;padding:6px 14px;border-radius:6px;transition:all 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
 .nav-link:hover{background:rgba(255,255,255,0.06);color:#f0f0f5}
-.nav-link.active{background:rgba(108,140,255,0.15);color:#6c8cff}
-@media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-links{margin-left:0;flex-wrap:wrap}}
+.nav-link.active{background:rgba(74,222,128,0.15);color:#4ade80}
 
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:16px}
+.card-label{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.card-value{font-size:28px;font-weight:700;font-family:'SF Mono',Consolas,monospace}
+.card-sub{font-size:12px;margin-top:4px;color:var(--text2)}
+
+/* Criteria panel */
+.criteria-panel{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
+.criteria-header{display:flex;align-items:center;gap:8px;padding:14px 20px;cursor:pointer;user-select:none;transition:background 0.15s}
+.criteria-header:hover{background:var(--surface)}
+.criteria-chevron{transition:transform 0.25s ease;color:var(--text3);font-size:12px;margin-left:auto}
+.criteria-chevron.open{transform:rotate(180deg)}
+.criteria-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 20px}
+.criteria-body.open{max-height:600px;padding:0 20px 20px}
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.criteria-card{background:var(--surface);border-radius:8px;padding:14px;border-left:3px solid}
+.criteria-card h3{margin:0 0 8px;font-size:14px;font-weight:600}
+.criteria-card ul{margin:0;padding-left:16px;font-size:12px;color:var(--text2);line-height:1.8}
+
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px}
+.chart-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:10px}
+.top-issues{margin-top:8px}
+.issue-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-l);font-size:13px}
+.issue-count{font-family:'SF Mono',Consolas,monospace;font-weight:600;min-width:28px;text-align:right;color:var(--text2)}
+
+.table-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--text3);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase}
+td{padding:8px 10px;border-bottom:1px solid var(--border-l);vertical-align:top}
+tr:hover td{background:var(--surface)}
+tr.detail-row td{padding:0}
+.issue-detail{padding:12px 16px;border-left:3px solid var(--primary);margin:4px 0 8px;background:rgba(74,222,128,0.03);border-radius:0 6px 6px 0}
+.issue-line{margin-bottom:10px;font-size:13px}
+.issue-line:last-child{margin-bottom:0}
+.issue-cat{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px}
+.cat-style{background:rgba(91,158,244,0.15);color:var(--cat-style)}
+.cat-gender{background:rgba(248,113,113,0.15);color:var(--cat-gender)}
+.cat-spell{background:rgba(251,191,36,0.15);color:var(--cat-spell)}
+.before-after{font-size:12px;color:var(--text2);margin:3px 0 0 24px;line-height:1.7}
+.before-after strong{color:var(--text)}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:500}
+.badge-clean{background:rgba(74,222,128,0.12);color:var(--primary)}
+.badge-issue{background:rgba(251,191,36,0.12);color:var(--warning)}
+.empty{text-align:center;padding:40px;color:var(--text3)}
+.loading{text-align:center;padding:50px;color:var(--text3)}
+.title-link{color:var(--text);text-decoration:none}
+.title-link:hover{color:var(--primary);text-decoration:underline}
+.media-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);color:var(--text3);margin-left:4px;font-weight:500}
 
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
 .controls label{font-size:12px;color:var(--text3)}
@@ -90,21 +80,23 @@ td.issue-detail .before-after strong{color:var(--text)}
 .quick-btns{display:flex;gap:6px}
 .qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2)}
 .qb.on{background:rgba(74,222,128,0.15);color:var(--primary);border-color:rgba(74,222,128,0.4)}
+
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.criteria-grid{grid-template-columns:1fr}.top-nav{flex-direction:column;gap:10px}.nav-links{margin-left:0;flex-wrap:wrap}}
 </style>
 </head>
 <body>
 <nav class="top-nav">
-  <a href="index.html" class="nav-logo"><i class="fa-solid fa-chart-line"></i> 경향신문 기사 품질 분석</a>
+  <a href="index.html" class="nav-logo"><i class="fa-solid fa-flask"></i> 경향신문 AI Newsroom Lab</a>
   <div class="nav-links">
-    <a href="kyunghyang-english.html" class="nav-link" id="nav-kh"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
-    <a href="k-culture.html" class="nav-link" id="nav-kc"><i class="fa-solid fa-film"></i> K-Culture</a>
-    <a href="editorial-standards.html" class="nav-link" id="nav-std"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
-    <a href="auto-translate.html" class="nav-link" id="nav-at"><i class="fa-solid fa-language"></i> Auto Translate</a>
+    <a href="kyunghyang-english.html" class="nav-link"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
+    <a href="k-culture.html" class="nav-link"><i class="fa-solid fa-film"></i> K-Culture</a>
+    <a href="editorial-standards.html" class="nav-link active"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
+    <a href="auto-translate.html" class="nav-link"><i class="fa-solid fa-language"></i> Auto Translate</a>
   </div>
 </nav>
 
 <h1><i class="fa-solid fa-spell-check"></i>경향 보도 기준</h1>
-<p class="subtitle">스타일가이드 · 젠더 보도 가이드라인 · 표기/맞춤법 검수 | Supabase 실시간 조회</p>
+<p class="subtitle">스타일가이드 · 젠더 보도 가이드라인 · 맞춤법 검수 | 이슈 발견 중심</p>
 
 <div class="controls">
 <label>시작일</label><input type="date" id="date-from">
@@ -120,54 +112,67 @@ td.issue-detail .before-after strong{color:var(--text)}
 
 <div class="grid">
   <div class="card">
-    <div class="card-label">오늘 출고 기사</div>
+    <div class="card-label">검수 기사</div>
     <div class="card-value" id="kpi-total">-</div>
-    <div class="card-delta positive" id="kpi-total-d"></div>
+    <div class="card-sub" id="kpi-total-sub"></div>
   </div>
   <div class="card">
-    <div class="card-label">이슈 발견</div>
-    <div class="card-value" style="color:var(--warning)" id="kpi-issues">-</div>
-    <div class="card-delta" id="kpi-issues-pct"></div>
+    <div class="card-label">이슈 발견 기사</div>
+    <div class="card-value" style="color:var(--warning)" id="kpi-issue-articles">-</div>
+    <div class="card-sub" id="kpi-issue-pct"></div>
   </div>
   <div class="card">
-    <div class="card-label">평균 점수</div>
-    <div class="card-value" id="kpi-avg">-</div>
-    <div class="card-delta positive" id="kpi-avg-d"></div>
+    <div class="card-label">총 이슈 건수</div>
+    <div class="card-value" style="color:var(--orange)" id="kpi-issue-count">-</div>
+    <div class="card-sub" id="kpi-issue-avg"></div>
   </div>
   <div class="card">
-    <div class="card-label">🔴 Critical 이슈</div>
-    <div class="card-value" style="color:var(--error)" id="kpi-crit">-</div>
-    <div class="card-delta negative" id="kpi-crit-desc">젠더 가이드라인 위반</div>
+    <div class="card-label">이슈 없음 (클린)</div>
+    <div class="card-value" style="color:var(--primary)" id="kpi-clean">-</div>
+    <div class="card-sub" id="kpi-clean-pct"></div>
   </div>
 </div>
 
-<!-- Collapsible Scoring Panel -->
-<div class="scoring-panel">
-  <div class="scoring-header" id="scoring-toggle">
-    <i class="fa-solid fa-calculator" style="color:var(--primary)"></i>
-    <div class="chart-title">채점 기준</div>
+<!-- Criteria panel -->
+<div class="criteria-panel">
+  <div class="criteria-header" id="criteria-toggle">
+    <i class="fa-solid fa-list-check" style="color:var(--primary)"></i>
+    <span style="font-size:14px;font-weight:600">검수 기준 안내</span>
     <span style="font-size:12px;color:var(--text3);margin-left:8px">(클릭하여 펼치기)</span>
-    <i class="fa-solid fa-chevron-down scoring-chevron" id="scoring-chevron"></i>
+    <i class="fa-solid fa-chevron-down criteria-chevron" id="criteria-chevron"></i>
   </div>
-  <div class="scoring-body" id="scoring-body">
-    <div class="formula-box">점수 = 100 − (Critical × 15) − (Warning × 7) − (Notice × 3)</div>
-    <div class="scoring-grid">
-      <div>
-        <table class="scoring-table">
-          <thead><tr><th>심각도</th><th>감점</th><th>해당 항목</th></tr></thead>
-          <tbody>
-            <tr><td>🔴 Critical</td><td style="font-weight:700;color:var(--error)">-15점/건</td><td>젠더폭력 보도 위반, 차별 용어, 피해자 신원 노출</td></tr>
-            <tr><td>🟠 Warning</td><td style="font-weight:700;color:var(--orange)">-7점/건</td><td>'우리나라' 사용, 주관적 종결어미, 영문약자 반복</td></tr>
-            <tr><td>🟡 Notice</td><td style="font-weight:700;color:var(--warning)">-3점/건</td><td>긴 문장(150자+), 피동형, 접속사 남용</td></tr>
-          </tbody>
-        </table>
+  <div class="criteria-body" id="criteria-body">
+    <div class="criteria-grid">
+      <div class="criteria-card" style="border-color:var(--cat-style)">
+        <h3>① 스타일 가이드</h3>
+        <ul>
+          <li>차별/혐오 표현 교정</li>
+          <li>비중립적 종결어미</li>
+          <li>'우리나라' → '한국'</li>
+          <li>피동형/수동형 남용</li>
+          <li>'~시키다' 오용</li>
+          <li>비문(주어 생략) 감지</li>
+          <li>영어 약자 남발</li>
+        </ul>
       </div>
-      <div>
-        <div style="font-size:11px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;font-weight:500">등급 기준</div>
-        <div class="grade-row"><span style="font-size:16px">🟢</span><span style="min-width:65px;font-weight:600">90~100</span><div class="grade-bar" style="flex:1;background:var(--primary)"></div><span style="color:var(--text2);font-size:12px">양호</span></div>
-        <div class="grade-row"><span style="font-size:16px">🟡</span><span style="min-width:65px;font-weight:600">70~89</span><div class="grade-bar" style="flex:1;background:var(--warning)"></div><span style="color:var(--text2);font-size:12px">주의</span></div>
-        <div class="grade-row"><span style="font-size:16px">🟠</span><span style="min-width:65px;font-weight:600">50~69</span><div class="grade-bar" style="flex:1;background:var(--orange)"></div><span style="color:var(--text2);font-size:12px">수정필요</span></div>
-        <div class="grade-row"><span style="font-size:16px">🔴</span><span style="min-width:65px;font-weight:600">0~49</span><div class="grade-bar" style="flex:1;background:var(--error)"></div><span style="color:var(--text2);font-size:12px">긴급</span></div>
+      <div class="criteria-card" style="border-color:var(--cat-gender)">
+        <h3>② 젠더 보도 가이드라인</h3>
+        <ul>
+          <li>불필요한 성별 강조</li>
+          <li>성별 고정관념 표현</li>
+          <li>돌봄=여성 전제 표현</li>
+          <li>교정 대상 용어</li>
+          <li>성소수자 존중</li>
+        </ul>
+      </div>
+      <div class="criteria-card" style="border-color:var(--cat-spell)">
+        <h3>③ 맞춤법</h3>
+        <ul>
+          <li>표기 오류</li>
+          <li>외래어 표기 오류</li>
+          <li>띄어쓰기 오류</li>
+          <li>동사 활용 오류</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -175,37 +180,28 @@ td.issue-detail .before-after strong{color:var(--text)}
 
 <div class="charts-row">
   <div class="chart-card">
-    <div class="chart-title">기준별 위반 현황</div>
+    <div class="chart-title">기준별 이슈 현황</div>
     <div id="chart-by-category" style="height:250px;"></div>
   </div>
   <div class="chart-card">
-    <div class="chart-title">심각도 분포</div>
-    <div id="chart-severity" style="height:250px;"></div>
-  </div>
-</div>
-
-<div class="charts-row">
-  <div class="chart-card">
-    <div class="chart-title">최근 7일 점수 추이</div>
-    <div id="chart-trend" style="height:230px;"></div>
-  </div>
-  <div class="chart-card">
-    <div class="chart-title">빈출 위반 표현 TOP 5</div>
+    <div class="chart-title">빈출 이슈 TOP 5</div>
     <div class="top-issues" id="top-issues">
       <div class="issue-item"><span class="issue-count">-</span><span>데이터 조회 후 표시</span></div>
     </div>
   </div>
 </div>
 
-<div class="table-card">
-  <div class="chart-title">이슈 기사 목록</div>
-  <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:var(--text2)">
-    <span>🔴 Critical (-15점) — 차별 용어, 젠더폭력 위반</span>
-    <span>🟠 Warning (-7점) — 스타일 가이드 명백 위반</span>
-    <span>🟡 Notice (-3점) — 개선 권장</span>
+<div class="charts-row">
+  <div class="chart-card" style="grid-column:span 2">
+    <div class="chart-title">일별 이슈 건수 추이</div>
+    <div id="chart-trend" style="height:220px;"></div>
   </div>
+</div>
+
+<div class="table-card">
+  <div class="chart-title">이슈 기사 목록 <span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px">이슈가 발견된 기사만 표시</span></div>
   <table>
-    <thead><tr><th>일시</th><th>매체</th><th>기사 제목</th><th>기자</th><th>점수</th><th style="min-width:300px">주요 이슈 (Before → After)</th></tr></thead>
+    <thead><tr><th>일시</th><th>매체</th><th>기사 제목</th><th>기자</th><th>이슈</th><th style="min-width:320px">이슈 상세 (Before → After)</th></tr></thead>
     <tbody id="article-table">
       <tr><td colspan="6" class="empty">날짜를 선택하고 조회를 눌러주세요.</td></tr>
     </tbody>
@@ -214,18 +210,32 @@ td.issue-detail .before-after strong{color:var(--text)}
 
 <div class="loading" id="loading" style="display:none">Supabase에서 데이터 로딩 중...</div>
 
+<footer style="text-align:center;padding:24px 0;font-size:12px;color:var(--text3)">
+Made by mien.kim · Powered by Amazon Quick · <a href="https://github.com/mien-kim/article-quality" style="color:var(--text3)">GitHub</a>
+</footer>
+
 <script>
-// Toggle scoring panel
-document.getElementById('scoring-toggle').addEventListener('click', function() {
-  document.getElementById('scoring-body').classList.toggle('open');
-  document.getElementById('scoring-chevron').classList.toggle('open');
+// Toggle criteria panel
+document.getElementById('criteria-toggle').addEventListener('click', function() {
+  document.getElementById('criteria-body').classList.toggle('open');
+  document.getElementById('criteria-chevron').classList.toggle('open');
 });
 
 var SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
-var TABLE_NAME = 'article_reviews'; // 국문 기사 검수 결과 테이블
+var SUPABASE_KEY = 'REDACTED_JWT'; // TODO: 사용자가 실제 JWT anon key로 교체
+var TABLE_NAME = 'article_reviews';
+
+function cleanText(str){
+  if(!str)return '';
+  return str
+    .replace(/기저/g,'기준').replace(/젥문/g,'장문').replace(/잡문/g,'장문')
+    .replace(/놙음/g,'높음').replace(/놙/g,'높')
+    .replace(/랏랏랏동해얀/g,'').replace(/랏/g,'·')
+    .replace(/Â°/g,'°').replace(/â€"/g,'—').replace(/â€\u0094/g,'—').replace(/\u00e2\u0080\u0094/g,'—');
+}
 
 function getLastWeek(){var now=new Date(),day=now.getDay()||7;var m=new Date(now);m.setDate(now.getDate()-day-6);var s=new Date(m);s.setDate(m.getDate()+6);return{from:fmt(m),to:fmt(s)}}
+function fmt(d){return d.toISOString().split('T')[0]}
 
 function setRange(r){
   document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
@@ -246,16 +256,26 @@ function loadData(){
   if(f&&t) fetchData(f,t);
 }
 
-function fmt(d){return d.toISOString().split('T')[0]}
+async function fetchAll(from, to){
+  var all=[], offset=0, limit=100;
+  while(true){
+    var res = await fetch(
+      SUPABASE_URL+'/rest/v1/'+TABLE_NAME+'?published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc&limit='+limit+'&offset='+offset,
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}}
+    );
+    var data = await res.json();
+    if(!Array.isArray(data)||!data.length) break;
+    all=all.concat(data);
+    if(data.length<limit) break;
+    offset+=limit;
+  }
+  return all;
+}
 
 async function fetchData(from, to){
   document.getElementById('loading').style.display='block';
   try{
-    var res = await fetch(
-      SUPABASE_URL+'/rest/v1/'+TABLE_NAME+'?published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc&limit=100',
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}}
-    );
-    var data = await res.json();
+    var data = await fetchAll(from, to);
     document.getElementById('loading').style.display='none';
     renderDashboard(data, from, to);
   }catch(e){
@@ -264,94 +284,125 @@ async function fetchData(from, to){
   }
 }
 
-
 function mediaLabel(m){
   if(m==='sports') return '스경';
   if(m==='weekly') return '주간';
   if(m==='lady') return '레이디';
   return '경향';
 }
-function renderDashboard(data, from, to){
-  // KPIs
-  var total = data.length;
-  var withIssues = data.filter(function(r){return r.score < 100}).length;
-  var avgScore = total > 0 ? Math.round(data.reduce(function(s,r){return s+r.score},0)/total*10)/10 : 0;
-  var criticals = data.reduce(function(s,r){return s + (r.critical_cnt || 0)},0);
 
+function catClass(cat){
+  if(!cat) return 'cat-style';
+  var c=cat.toLowerCase();
+  if(c.indexOf('젠더')!==-1||c.indexOf('gender')!==-1) return 'cat-gender';
+  if(c.indexOf('맞춤법')!==-1||c.indexOf('spell')!==-1||c.indexOf('표기')!==-1) return 'cat-spell';
+  return 'cat-style';
+}
+
+function catLabel(cat){
+  if(!cat) return '스타일';
+  var c=cat.toLowerCase();
+  if(c.indexOf('젠더')!==-1||c.indexOf('gender')!==-1) return '젠더';
+  if(c.indexOf('맞춤법')!==-1||c.indexOf('spell')!==-1||c.indexOf('표기')!==-1) return '맞춤법';
+  return '스타일';
+}
+
+function renderDashboard(data){
+  var total = data.length;
+  var allIssues = [];
+  var issueArticles = [];
+  var cleanArticles = 0;
+
+  data.forEach(function(r){
+    var issues = r.issues || [];
+    if(typeof issues === 'string'){try{issues=JSON.parse(issues)}catch(e){issues=[]}}
+    r._issues = issues;
+    if(issues.length > 0){ issueArticles.push(r); }
+    else{ cleanArticles++; }
+    allIssues = allIssues.concat(issues);
+  });
+
+  // KPIs
   document.getElementById('kpi-total').textContent = total || '-';
-  document.getElementById('kpi-issues').textContent = withIssues || '-';
-  document.getElementById('kpi-issues-pct').textContent = total ? '전체의 '+Math.round(withIssues/total*100)+'%' : '';
-  document.getElementById('kpi-avg').textContent = avgScore || '-';
-  document.getElementById('kpi-crit').textContent = criticals || '0';
+  document.getElementById('kpi-total-sub').textContent = total ? '경향·스경·주간·레이디' : '';
+  document.getElementById('kpi-issue-articles').textContent = issueArticles.length || '0';
+  document.getElementById('kpi-issue-pct').textContent = total ? '전체의 '+Math.round(issueArticles.length/total*100)+'%' : '';
+  document.getElementById('kpi-issue-count').textContent = allIssues.length || '0';
+  document.getElementById('kpi-issue-avg').textContent = issueArticles.length ? '기사당 평균 '+(allIssues.length/issueArticles.length).toFixed(1)+'건' : '';
+  document.getElementById('kpi-clean').textContent = cleanArticles;
+  document.getElementById('kpi-clean-pct').textContent = total ? '전체의 '+Math.round(cleanArticles/total*100)+'%' : '';
 
   if(!total){
     document.getElementById('article-table').innerHTML='<tr><td colspan="6" class="empty">해당 기간에 검수된 기사가 없습니다.</td></tr>';
     return;
   }
 
-  // Charts
-  var catCounts = {'① 스타일 가이드':0,'② 젠더 보도':0,'③ 표기·맞춤법':0,'④ 사진·캡션':0};
-  var sevCounts = {Critical:0,Warning:0,Notice:0,Pass:0};
-  var topTerms = {};
-
-  data.forEach(function(r){
-    var issues = r.issues || [];
-    if(!issues.length){sevCounts.Pass++;return}
-    issues.forEach(function(i){
-      if(i.category && catCounts[i.category]!==undefined) catCounts[i.category]++;
-      if(i.severity) sevCounts[i.severity]=(sevCounts[i.severity]||0)+1;
-      if(i.term) topTerms[i.term]=(topTerms[i.term]||0)+1;
-    });
+  // Chart: issues by category
+  var catCounts = {'스타일 가이드':0,'젠더 보도':0,'맞춤법':0};
+  var topDescs = {};
+  allIssues.forEach(function(i){
+    var lbl = catLabel(i.category);
+    if(lbl==='스타일') catCounts['스타일 가이드']++;
+    else if(lbl==='젠더') catCounts['젠더 보도']++;
+    else catCounts['맞춤법']++;
+    var desc = cleanText(i.description || i.term || '');
+    if(desc) topDescs[desc]=(topDescs[desc]||0)+1;
   });
 
-  Highcharts.chart('chart-by-category',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:Object.keys(catCounts),labels:{style:{color:'#a1a8b8',fontSize:'12px'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}}},legend:{enabled:false},plotOptions:{bar:{borderRadius:4,borderWidth:0,dataLabels:{enabled:true,style:{fontSize:'12px',fontWeight:'600',color:'#e4e7ec',textOutline:'none'}}}},series:[{data:[{y:catCounts['① 스타일 가이드'],color:'#5b9ef4'},{y:catCounts['② 젠더 보도'],color:'#f87171'},{y:catCounts['③ 표기·맞춤법'],color:'#fbbf24'},{y:catCounts['④ 사진·캡션'],color:'#4ade80'}]}],credits:{enabled:false}});
+  Highcharts.chart('chart-by-category',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:Object.keys(catCounts),labels:{style:{color:'#a1a8b8',fontSize:'13px'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}},allowDecimals:false},legend:{enabled:false},plotOptions:{bar:{borderRadius:4,borderWidth:0,dataLabels:{enabled:true,style:{fontSize:'13px',fontWeight:'700',color:'#e4e7ec',textOutline:'none'}}}},series:[{data:[{y:catCounts['스타일 가이드'],color:'var(--cat-style)'},{y:catCounts['젠더 보도'],color:'var(--cat-gender)'},{y:catCounts['맞춤법'],color:'var(--cat-spell)'}]}],credits:{enabled:false}});
 
-  Highcharts.chart('chart-severity',{chart:{type:'pie',backgroundColor:'transparent'},title:{text:null},plotOptions:{pie:{innerSize:'55%',borderWidth:0,dataLabels:{format:'{point.name}<br>{point.y}건',style:{fontSize:'11px',color:'#a1a8b8',textOutline:'none'}}}},series:[{data:[{name:'Critical',y:sevCounts.Critical||0,color:'#f87171'},{name:'Warning',y:sevCounts.Warning||0,color:'#fb923c'},{name:'Notice',y:sevCounts.Notice||0,color:'#fbbf24'},{name:'Pass',y:sevCounts.Pass||0,color:'#4ade80'}]}],credits:{enabled:false}});
+  // Top issues
+  var sorted=Object.entries(topDescs).sort(function(a,b){return b[1]-a[1]}).slice(0,5);
+  document.getElementById('top-issues').innerHTML=sorted.length?sorted.map(function(t){return '<div class="issue-item"><span class="issue-count">'+t[1]+'</span><span>'+cleanText(t[0])+'</span></div>'}).join(''):'<div class="issue-item"><span class="issue-count">0</span><span>이슈 없음</span></div>';
 
-  // Trend (mock daily aggregation)
+  // Trend chart: daily issue counts
   var daily={};
   data.forEach(function(r){
     var day=r.published_at?r.published_at.split('T')[0]:'?';
-    if(!daily[day])daily[day]={sum:0,cnt:0};
-    daily[day].sum+=r.score;daily[day].cnt++;
+    if(!daily[day])daily[day]={issues:0,total:0};
+    daily[day].total++;
+    daily[day].issues += (r._issues||[]).length;
   });
   var days=Object.keys(daily).sort();
-  Highcharts.chart('chart-trend',{chart:{type:'areaspline',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:days.map(function(d){return d.slice(5)}),labels:{style:{color:'#a1a8b8'}},lineColor:'#353a44'},yAxis:{min:70,max:100,title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}}},plotOptions:{areaspline:{fillOpacity:0.08,marker:{radius:4,fillColor:'#4ade80',lineColor:'#4ade80'}}},series:[{name:'평균 점수',data:days.map(function(d){return Math.round(daily[d].sum/daily[d].cnt*10)/10}),color:'#4ade80'}],legend:{enabled:false},credits:{enabled:false}});
+  Highcharts.chart('chart-trend',{chart:{type:'column',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:days.map(function(d){return d.slice(5)}),labels:{style:{color:'#a1a8b8'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}},allowDecimals:false},legend:{enabled:true,itemStyle:{color:'#a1a8b8'}},plotOptions:{column:{borderRadius:3,borderWidth:0}},series:[{name:'이슈 건수',data:days.map(function(d){return daily[d].issues}),color:'var(--orange)'},{name:'검수 기사',data:days.map(function(d){return daily[d].total}),color:'rgba(74,222,128,0.4)'}],credits:{enabled:false}});
 
-  // Top issues
-  var sorted=Object.entries(topTerms).sort(function(a,b){return b[1]-a[1]}).slice(0,5);
-  document.getElementById('top-issues').innerHTML=sorted.length?sorted.map(function(t){return '<div class="issue-item"><span class="issue-count">'+t[1]+'</span><span>'+t[0]+'</span></div>'}).join(''):'<div class="issue-item"><span class="issue-count">0</span><span>이슈 없음</span></div>';
-
-  // Table
-  var issueArticles = data.filter(function(r){return r.score < 100});
+  // Table: only articles with issues
   if(!issueArticles.length){
-    document.getElementById('article-table').innerHTML='<tr><td colspan="6" class="empty">모든 기사 양호 ✅</td></tr>';
+    document.getElementById('article-table').innerHTML='<tr><td colspan="6" class="empty">모든 기사 이슈 없음 ✅</td></tr>';
     return;
   }
   document.getElementById('article-table').innerHTML=issueArticles.map(function(r){
     var dt=r.published_at?new Date(r.published_at):null;
     var dateStr=dt?(String(dt.getMonth()+1).padStart(2,'0')+'.'+String(dt.getDate()).padStart(2,'0')+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0')):'';
-    var issues=r.issues||[];
+    var issues=r._issues||[];
+    var issueCnt = issues.length;
     var issueHtml=issues.map(function(i){
-      var icon=i.severity==='Critical'?'🔴':i.severity==='Warning'?'🟠':'🟡';
-      return '<div class="issue-line">'+icon+' ['+(i.category||'')+'] '+(i.term||'')+' → '+(i.replacement||'')+'</div>'+
-        (i.context?'<div class="before-after"><strong>Before:</strong> '+i.context+'</div>':'')+
-        '<div class="before-after"><strong>After:</strong> '+(i.replacement||'')+'</div>';
+      var cls = catClass(i.category);
+      var lbl = catLabel(i.category);
+      var desc = cleanText(i.description || i.term || '');
+      var before = cleanText(i.before || i.context || '');
+      var after = cleanText(i.after || i.replacement || '');
+      return '<div class="issue-line"><span class="issue-cat '+cls+'">'+lbl+'</span>'+desc+'</div>'+
+        (before?'<div class="before-after"><strong>Before:</strong> '+before+'</div>':'')+
+        (after?'<div class="before-after"><strong>After:</strong> '+after+'</div>':'');
     }).join('');
-    var badgeCls=r.score>=90?'badge-green':r.score>=70?'badge-yellow':r.score>=50?'badge-orange':'badge-red';
-    return '<tr><td>'+dateStr+'</td><td>'+mediaLabel(r.media)+'</td><td>'+r.title+'</td><td>'+(r.reporter||'-')+'</td><td class="score"><span class="badge '+badgeCls+'">'+r.score+'</span></td><td class="issue-detail">'+issueHtml+'</td></tr>';
+    var url = r.article_url || r.url || '#';
+    return '<tr><td>'+dateStr+'</td><td><span class="media-badge">'+mediaLabel(r.media)+'</span></td><td><a href="'+url+'" target="_blank" class="title-link">'+cleanText(r.title)+'</a></td><td>'+(r.reporter||'-')+'</td><td style="text-align:center"><span class="badge badge-issue">'+issueCnt+'건</span></td><td><div class="issue-detail">'+issueHtml+'</div></td></tr>';
   }).join('');
 }
 
-// Init: set last week as default
+// Init: load this week
 (function(){
-  var lw=getLastWeek();
-  document.getElementById('date-from').value=lw.from;
-  document.getElementById('date-to').value=lw.to;
-  fetchData(lw.from,lw.to);
+  var now=new Date(),d=now.getDay()||7;
+  var f=fmt(new Date(now.getFullYear(),now.getMonth(),now.getDate()-d+1));
+  var t=fmt(now);
+  document.getElementById('date-from').value=f;
+  document.getElementById('date-to').value=t;
+  // default to this week since data is fresh
+  document.querySelectorAll('.qb').forEach(function(b){b.classList.remove('on')});
+  document.querySelectorAll('.qb')[1].classList.add('on');
+  fetchData(f,t);
 })();
-
-document.getElementById("nav-std").classList.add("active");
 </script>
 </body>
 </html>
