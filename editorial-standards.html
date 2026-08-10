@@ -14,14 +14,6 @@ h1{font-size:24px;font-weight:700;margin:0 0 4px}
 h1 i{color:var(--primary);margin-right:8px}
 .subtitle{color:var(--text3);font-size:13px;margin-bottom:24px}
 
-.top-nav{display:flex;align-items:center;gap:24px;padding:12px 20px;background:rgba(15,15,26,0.95);border-bottom:1px solid rgba(255,255,255,0.08);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
-.nav-logo{color:#f0f0f5;text-decoration:none;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
-.nav-logo i{color:#6c8cff}
-.nav-links{display:flex;gap:4px;margin-left:auto}
-.nav-link{color:#a0a0c0;text-decoration:none;font-size:13px;padding:6px 14px;border-radius:6px;transition:all 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
-.nav-link:hover{background:rgba(255,255,255,0.06);color:#f0f0f5}
-.nav-link.active{background:rgba(74,222,128,0.15);color:#4ade80}
-
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:16px}
 .card-label{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
@@ -81,17 +73,35 @@ tr.detail-row td{padding:0}
 .qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2)}
 .qb.on{background:rgba(74,222,128,0.15);color:var(--primary);border-color:rgba(74,222,128,0.4)}
 
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.criteria-grid{grid-template-columns:1fr}.top-nav{flex-direction:column;gap:10px}.nav-links{margin-left:0;flex-wrap:wrap}}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.criteria-grid{grid-template-columns:1fr}}
+
+.top-nav{display:flex;align-items:center;gap:16px;padding:12px 24px;background:rgba(15,15,26,0.97);border-bottom:1px solid rgba(255,255,255,0.06);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.nav-brand{font-size:14px;font-weight:700;color:#f0f0f5;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.nav-brand i{color:#6c8cff;font-size:16px}
+.nav-brand span{font-size:11px;color:#6060a0;margin-left:4px}
+.nav-menu{display:flex;gap:6px}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;color:#a0a0c0;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
+.nav-btn:hover{background:rgba(255,255,255,0.08);color:#f0f0f5;border-color:rgba(255,255,255,0.12)}
+.nav-btn.active-kh{background:rgba(79,195,247,0.12);color:#4fc3f7;border-color:rgba(79,195,247,0.3)}
+.nav-btn.active-kc{background:rgba(167,139,250,0.12);color:#a78bfa;border-color:rgba(167,139,250,0.3)}
+.nav-btn.active-std{background:rgba(74,222,128,0.12);color:#4ade80;border-color:rgba(74,222,128,0.3)}
+.nav-btn.active-at{background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.3)}
+@media(max-width:700px){.top-nav{flex-direction:column;gap:10px}.nav-menu{flex-wrap:wrap}}
+
 </style>
 </head>
 <body>
 <nav class="top-nav">
-  <a href="index.html" class="nav-logo"><i class="fa-solid fa-flask"></i> 경향신문 AI Newsroom Lab</a>
-  <div class="nav-links">
-    <a href="kyunghyang-english.html" class="nav-link"><i class="fa-solid fa-globe"></i> Kyunghyang English</a>
-    <a href="k-culture.html" class="nav-link"><i class="fa-solid fa-film"></i> K-Culture</a>
-    <a href="editorial-standards.html" class="nav-link active"><i class="fa-solid fa-spell-check"></i> 경향 보도 기준</a>
-    <a href="auto-translate.html" class="nav-link"><i class="fa-solid fa-language"></i> Auto Translate</a>
+  <a href="index.html" class="nav-brand">
+    <i class="fa-solid fa-flask"></i>
+    경향신문 AI Newsroom Lab
+    <span>Amazon Quick 실험실</span>
+  </a>
+  <div class="nav-menu">
+    <a href="kyunghyang-english.html" class="nav-btn"><i class="fa-solid fa-globe"></i> English</a>
+    <a href="k-culture.html" class="nav-btn"><i class="fa-solid fa-film"></i> K-Culture</a>
+    <a href="editorial-standards.html" class="nav-btn active-std"><i class="fa-solid fa-spell-check"></i> 보도 기준</a>
+    <a href="auto-translate.html" class="nav-btn"><i class="fa-solid fa-language"></i> Auto Translate</a>
   </div>
 </nav>
 
@@ -222,7 +232,7 @@ document.getElementById('criteria-toggle').addEventListener('click', function() 
 });
 
 var SUPABASE_URL = 'https://wwaflpepyrlfdcxvtscp.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YWZscGVweXJsZmRjeHZ0c2NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDk0NjEsImV4cCI6MjEwMTUyNTQ2MX0.0E68M0hqgH1tWmWmSE1Cs9MTYqLaOTBsjen0d2rnjGE';
+var SUPABASE_KEY = 'sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9'; // TODO: 사용자가 실제 JWT anon key로 교체
 var TABLE_NAME = 'article_reviews';
 
 function cleanText(str){
@@ -261,7 +271,7 @@ async function fetchAll(from, to){
   while(true){
     var res = await fetch(
       SUPABASE_URL+'/rest/v1/'+TABLE_NAME+'?published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc&limit='+limit+'&offset='+offset,
-      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}}
+      {headers:{'apikey':SUPABASE_KEY}}
     );
     var data = await res.json();
     if(!Array.isArray(data)||!data.length) break;
