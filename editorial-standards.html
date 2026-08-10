@@ -9,65 +9,65 @@
 <style>
 :root{--bg:#1a1d23;--bg2:#22262e;--surface:#2a2f38;--border:#353a44;--border-l:#2e333d;--text:#e4e7ec;--text2:#a1a8b8;--text3:#6b7385;--primary:#4ade80;--error:#f87171;--warning:#fbbf24;--orange:#fb923c;--cat-style:#5b9ef4;--cat-gender:#f87171;--cat-spell:#fbbf24;--radius:8px}
 *{box-sizing:border-box}
-body{background:var(--bg);margin:0;padding:24px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text);font-size:15px;line-height:1.6}
-h1{font-size:24px;font-weight:700;margin:0 0 4px}
+body{background:var(--bg);margin:0;padding:24px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text);font-size:16px;line-height:1.6}
+h1{font-size:26px;font-weight:700;margin:0 0 4px}
 h1 i{color:var(--primary);margin-right:8px}
 .subtitle{color:var(--text3);font-size:14px;margin-bottom:24px}
 
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:16px}
 .card-label{color:var(--text3);font-size:13px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
-.card-value{font-size:28px;font-weight:700;font-family:'SF Mono',Consolas,monospace}
-.card-sub{font-size:12px;margin-top:4px;color:var(--text2)}
+.card-value{font-size:30px;font-weight:700;font-family:'SF Mono',Consolas,monospace}
+.card-sub{font-size:13px;margin-top:4px;color:var(--text2)}
 
 /* Criteria panel */
 .criteria-panel{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
 .criteria-header{display:flex;align-items:center;gap:8px;padding:14px 20px;cursor:pointer;user-select:none;transition:background 0.15s}
 .criteria-header:hover{background:var(--surface)}
-.criteria-chevron{transition:transform 0.25s ease;color:var(--text3);font-size:12px;margin-left:auto}
+.criteria-chevron{transition:transform 0.25s ease;color:var(--text3);font-size:13px;margin-left:auto}
 .criteria-chevron.open{transform:rotate(180deg)}
 .criteria-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 20px}
 .criteria-body.open{max-height:600px;padding:0 20px 20px}
 .criteria-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 .criteria-card{background:var(--surface);border-radius:8px;padding:14px;border-left:3px solid}
-.criteria-card h3{margin:0 0 8px;font-size:14px;font-weight:600}
-.criteria-card ul{margin:0;padding-left:16px;font-size:12px;color:var(--text2);line-height:1.8}
+.criteria-card h3{margin:0 0 8px;font-size:15px;font-weight:600}
+.criteria-card ul{margin:0;padding-left:16px;font-size:13px;color:var(--text2);line-height:1.8}
 
 .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px}
 .chart-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
-.chart-title{font-size:14px;font-weight:600;margin-bottom:10px}
+.chart-title{font-size:15px;font-weight:600;margin-bottom:10px}
 .top-issues{margin-top:8px}
-.issue-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-l);font-size:13px}
+.issue-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-l);font-size:14px}
 .issue-count{font-family:'SF Mono',Consolas,monospace;font-weight:600;min-width:28px;text-align:right;color:var(--text2)}
 
 .table-card{background:var(--bg2);border:1px solid var(--border-l);border-radius:var(--radius);padding:18px}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}
 th{text-align:left;color:var(--text3);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;text-transform:uppercase}
 td{padding:8px 10px;border-bottom:1px solid var(--border-l);vertical-align:top}
 tr:hover td{background:var(--surface)}
 tr.detail-row td{padding:0}
 .issue-detail{padding:12px 16px;border-left:3px solid var(--primary);margin:4px 0 8px;background:rgba(74,222,128,0.03);border-radius:0 6px 6px 0}
-.issue-line{margin-bottom:10px;font-size:13px}
+.issue-line{margin-bottom:10px;font-size:14px}
 .issue-line:last-child{margin-bottom:0}
-.issue-cat{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px}
+.issue-cat{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;margin-right:6px}
 .cat-style{background:rgba(91,158,244,0.15);color:var(--cat-style)}
 .cat-gender{background:rgba(248,113,113,0.15);color:var(--cat-gender)}
 .cat-spell{background:rgba(251,191,36,0.15);color:var(--cat-spell)}
-.before-after{font-size:12px;color:var(--text2);margin:3px 0 0 24px;line-height:1.7}
+.before-after{font-size:13px;color:var(--text2);margin:3px 0 0 24px;line-height:1.7}
 .before-after strong{color:var(--text)}
-.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:13px;font-weight:500}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500}
 .badge-clean{background:rgba(74,222,128,0.12);color:var(--primary)}
 .badge-issue{background:rgba(251,191,36,0.12);color:var(--warning)}
 .empty{text-align:center;padding:40px;color:var(--text3)}
 .loading{text-align:center;padding:50px;color:var(--text3)}
 .title-link{color:var(--text);text-decoration:none}
 .title-link:hover{color:var(--primary);text-decoration:underline}
-.media-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);color:var(--text3);margin-left:4px;font-weight:500}
+.media-badge{font-size:11px;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);color:var(--text3);margin-left:4px;font-weight:500}
 
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
 .controls label{font-size:13px;color:var(--text3)}
-.controls input[type=date]{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px}
-.controls button{background:var(--primary);color:#000;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.controls input[type=date]{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:14px}
+.controls button{background:var(--primary);color:#000;border:none;padding:7px 16px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer}
 .controls button:hover{opacity:0.9}
 .quick-btns{display:flex;gap:6px}
 .qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:13px;cursor:pointer;background:var(--bg);color:var(--text2)}
@@ -76,9 +76,9 @@ tr.detail-row td{padding:0}
 @media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.criteria-grid{grid-template-columns:1fr}}
 
 .top-nav{display:flex;align-items:center;gap:16px;padding:12px 24px;background:rgba(15,15,26,0.97);border-bottom:1px solid rgba(255,255,255,0.06);margin:-24px -32px 24px;padding:14px 32px;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
-.nav-brand{font-size:14px;font-weight:700;color:#f0f0f5;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
-.nav-brand i{color:#6c8cff;font-size:16px}
-.nav-brand span{font-size:11px;color:#6060a0;margin-left:4px}
+.nav-brand{font-size:15px;font-weight:700;color:#f0f0f5;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.nav-brand i{color:#6c8cff;font-size:17px}
+.nav-brand span{font-size:13px;color:#6060a0;margin-left:4px}
 .nav-menu{display:flex;gap:6px}
 .nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;color:#a0a0c0;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
 .nav-btn:hover{background:rgba(255,255,255,0.08);color:#f0f0f5;border-color:rgba(255,255,255,0.12)}
@@ -115,8 +115,8 @@ tr.detail-row td{padding:0}
 <div class="quick-btns">
 <div class="qb" onclick="setRange('today')">오늘</div>
 <div class="qb" onclick="setRange('week')">이번 주</div>
-<div class="qb" onclick="setRange('lastweek')">지난 주</div>
-<div class="qb on" onclick="setRange('month')">이번 달</div>
+<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
 
@@ -148,7 +148,7 @@ tr.detail-row td{padding:0}
   <div class="criteria-header" id="criteria-toggle">
     <i class="fa-solid fa-list-check" style="color:var(--primary)"></i>
     <span style="font-size:14px;font-weight:600">검수 기준 안내</span>
-    <span style="font-size:14px;color:var(--text3);margin-left:8px">(클릭하여 펼치기)</span>
+    <span style="font-size:12px;color:var(--text3);margin-left:8px">(클릭하여 펼치기)</span>
     <i class="fa-solid fa-chevron-down criteria-chevron" id="criteria-chevron"></i>
   </div>
   <div class="criteria-body" id="criteria-body">
@@ -209,9 +209,9 @@ tr.detail-row td{padding:0}
 </div>
 
 <div class="table-card">
-  <div class="chart-title">이슈 기사 목록 <span style="font-size:14px;font-weight:400;color:var(--text3);margin-left:8px">이슈가 발견된 기사만 표시</span></div>
+  <div class="chart-title">이슈 기사 목록 <span style="font-size:12px;font-weight:400;color:var(--text3);margin-left:8px">이슈가 발견된 기사만 표시</span></div>
   <table>
-    <thead><tr><th>일시</th><th style="min-width:60px">매체</th><th>기사 제목</th><th style="min-width:70px">기자</th><th>이슈</th><th style="min-width:400px">이슈 및 개선사항</th></tr></thead>
+    <thead><tr><th>일시</th><th style="min-width:60px">매체</th><th>기사 제목</th><th style="min-width:70px">기자</th><th>이슈</th><th style="min-width:420px">이슈 및 개선사항</th></tr></thead>
     <tbody id="article-table">
       <tr><td colspan="6" class="empty">날짜를 선택하고 조회를 눌러주세요.</td></tr>
     </tbody>
@@ -240,7 +240,7 @@ function cleanText(str){
   return str
     .replace(/기저/g,'기준').replace(/젥문/g,'장문').replace(/잡문/g,'장문')
     .replace(/놙음/g,'높음').replace(/놙/g,'높')
-    .replace(/랏랏랏동해얀/g,'').replace(/랏/g,'·')
+    .replace(/럏럏럏동해얀/g,'').replace(/럏/g,'·')
     .replace(/Â°/g,'°').replace(/â€"/g,'—').replace(/â€\u0094/g,'—').replace(/\u00e2\u0080\u0094/g,'—');
 }
 
@@ -359,7 +359,7 @@ function renderDashboard(data){
     if(desc) topDescs[desc]=(topDescs[desc]||0)+1;
   });
 
-  Highcharts.chart('chart-by-category',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:Object.keys(catCounts),labels:{style:{color:'#a1a8b8',fontSize:'13px'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}},allowDecimals:false},legend:{enabled:false},plotOptions:{bar:{borderRadius:4,borderWidth:0,dataLabels:{enabled:true,style:{fontSize:'13px',fontWeight:'700',color:'#e4e7ec',textOutline:'none'}}}},series:[{data:[{y:catCounts['스타일 가이드'],color:'var(--cat-style)'},{y:catCounts['젠더 보도'],color:'var(--cat-gender)'},{y:catCounts['맞춤법'],color:'var(--cat-spell)'}]}],credits:{enabled:false}});
+  Highcharts.chart('chart-by-category',{chart:{type:'bar',backgroundColor:'transparent'},title:{text:null},xAxis:{categories:Object.keys(catCounts),labels:{style:{color:'#a1a8b8',fontSize:'14px'}},lineColor:'#353a44'},yAxis:{title:{text:null},gridLineColor:'#353a44',labels:{style:{color:'#6b7385'}},allowDecimals:false},legend:{enabled:false},plotOptions:{bar:{borderRadius:4,borderWidth:0,dataLabels:{enabled:true,style:{fontSize:'14px',fontWeight:'700',color:'#e4e7ec',textOutline:'none'}}}},series:[{data:[{y:catCounts['스타일 가이드'],color:'var(--cat-style)'},{y:catCounts['젠더 보도'],color:'var(--cat-gender)'},{y:catCounts['맞춤법'],color:'var(--cat-spell)'}]}],credits:{enabled:false}});
 
   // Top issues
   var sorted=Object.entries(topDescs).sort(function(a,b){return b[1]-a[1]}).slice(0,5);
@@ -397,7 +397,7 @@ function renderDashboard(data){
         (after?'<div class="before-after"><strong>After:</strong> '+after+'</div>':'');
     }).join('');
     var url = r.article_url || r.url || '#';
-    return '<tr><td>'+dateStr+'</td><td><span class="media-badge">'+mediaLabel(r.media)+'</span></td><td><a href="'+url+'" target="_blank" class="title-link">'+cleanText(r.title)+'</a></td><td>'+(r.reporter||'-')+'</td><td style="text-align:center"><span class="badge badge-issue">'+issueCnt+'건</span></td><td><div class="issue-detail">'+issueHtml+'</div></td></tr>';
+    return '<tr><td>'+dateStr+'</td><td><span class="media-badge">'+mediaLabel(r.media)+'</span></td><td><a href="'+url+'" target="_blank" class="title-link">'+cleanText(r.title)+'</a></td><td>'+(r.reporter||'-')+'</td><td style="text-align:center"><span class="badge badge-issue">'+issueCnt+'건</span></td><td style="min-width:420px"><div class="issue-detail">'+issueHtml+'</div></td></tr>';
   }).join('');
 }
 
