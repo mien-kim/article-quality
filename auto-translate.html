@@ -17,12 +17,12 @@ h1{font-size:26px;font-weight:700;margin:0 0 4px}
 h1 i{color:var(--accent);margin-right:8px}
 .sub{color:var(--text3);font-size:14px;margin-bottom:20px}
 .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px}
-.controls label{font-size:12px;color:var(--text3)}
+.controls label{font-size:13px;color:var(--text3)}
 .controls input[type=date]{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:6px;font-size:13px}
 .controls button{background:var(--accent);color:#000;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
 .controls button:hover{opacity:0.9}
 .quick-btns{display:flex;gap:6px}
-.qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text2)}
+.qb{padding:5px 11px;border:1px solid var(--border);border-radius:6px;font-size:13px;cursor:pointer;background:var(--bg);color:var(--text2)}
 .qb.on{background:rgba(245,158,11,0.15);color:var(--accent);border-color:rgba(245,158,11,0.4)}
 .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
 .kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
@@ -33,7 +33,7 @@ h1 i{color:var(--accent);margin-right:8px}
 .c{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px}
 .tbl-wrap{max-height:600px;overflow-y:auto;border-radius:10px;background:var(--bg2);border:1px solid var(--border);padding:14px}
 table.m{width:100%;border-collapse:collapse;font-size:13px}
-table.m th{text-align:left;color:var(--text3);font-weight:500;padding:9px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;position:sticky;top:0;background:var(--bg2);z-index:1}
+table.m th{text-align:left;color:var(--text3);font-weight:500;padding:9px;border-bottom:1px solid var(--border);font-size:13px;text-transform:uppercase;position:sticky;top:0;background:var(--bg2);z-index:1}
 table.m td{padding:9px;border-bottom:1px solid rgba(42,58,94,0.5);vertical-align:top}
 table.m tr:hover td{background:rgba(245,158,11,0.05)}
 .badge{display:inline-block;padding:3px 8px;border-radius:10px;font-weight:700;font-size:12px;font-family:'SF Mono',Consolas,monospace}
@@ -66,7 +66,7 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
 .nav-brand i{color:#6c8cff;font-size:16px}
 .nav-brand span{font-size:11px;color:#6060a0;margin-left:4px}
 .nav-menu{display:flex;gap:6px}
-.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;color:#a0a0c0;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;color:#a0a0c0;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all 0.2s}
 .nav-btn:hover{background:rgba(255,255,255,0.08);color:#f0f0f5;border-color:rgba(255,255,255,0.12)}
 .nav-btn.active-kh{background:rgba(79,195,247,0.12);color:#4fc3f7;border-color:rgba(79,195,247,0.3)}
 .nav-btn.active-kc{background:rgba(167,139,250,0.12);color:#a78bfa;border-color:rgba(167,139,250,0.3)}
@@ -102,8 +102,8 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:13px}
 <div class="quick-btns">
 <div class="qb" onclick="setRange('today')">오늘</div>
 <div class="qb" onclick="setRange('week')">이번 주</div>
-<div class="qb on" onclick="setRange('lastweek')">지난 주</div>
-<div class="qb" onclick="setRange('month')">이번 달</div>
+<div class="qb" onclick="setRange('lastweek')">지난 주</div>
+<div class="qb on" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
 
@@ -172,6 +172,10 @@ async function loadData(){
   try{var r2=await fetch(eUrl,{headers:{'apikey':SUPABASE_KEY}});englishArticles=await r2.json()}catch(e){englishArticles=[]}
   if(!Array.isArray(englishArticles)) englishArticles=[];
   document.getElementById('loading').style.display='none';
+
+    // Deduplicate by original_url
+    var seen={};
+    allData=allData.filter(function(d){var key=d.original_url||d.original_title;if(seen[key])return false;seen[key]=true;return true});
   document.getElementById('empty').style.display=allData.length?'none':'block';
   render();
 }
@@ -214,26 +218,26 @@ function render(){
     var locals=d.localization_applied||[];if(typeof locals==='string'){try{locals=JSON.parse(locals)}catch(e){locals=[]}}
 
     html+='<tr class="row-clickable" onclick="toggleIssue('+idx+')"><td><i class="fa-solid fa-chevron-right expand-icon" id="exp-'+idx+'"></i></td>';
-    html+='<td style="font-size:12px;color:var(--text2)">'+mediaLabel(d.media)+'</td>';
+    html+='<td style="font-size:14px;color:var(--text2)">'+mediaLabel(d.media)+'</td>';
     html+='<td><span style="font-family:monospace;font-weight:600;color:var(--accent)">'+d.interest_score+'</span><br><span class="interest-bar" style="width:'+intW+'px"></span></td>';
     html+='<td><span class="badge '+qCls+'">'+d.quality_score+'</span></td>';
-    html+='<td><span style="font-size:12px;color:var(--text3)">'+d.original_title.slice(0,30)+'...</span><br><span style="font-size:13px">'+d.translated_title.slice(0,50)+'</span></td>';
-    html+='<td style="font-size:12px;color:var(--text2)">'+(d.section||'-')+'</td>';
-    html+='<td style="font-size:12px;color:#6b7a8d;white-space:nowrap">'+dt+'</td>';
+    html+='<td><span style="font-size:14px;color:var(--text3)">'+d.original_title.slice(0,30)+'...</span><br><span style="font-size:13px">'+d.translated_title.slice(0,50)+'</span></td>';
+    html+='<td style="font-size:14px;color:var(--text2)">'+(d.section||'-')+'</td>';
+    html+='<td style="font-size:14px;color:#6b7a8d;white-space:nowrap">'+dt+'</td>';
     html+='<td><span class="status-tag '+stCls+'">'+stTxt+'</span></td>';
     // 선별근거 column
-    html+='<td style="font-size:12px;color:var(--text2)">'+(d.selection_reason||'-')+'</td>';
+    html+='<td style="font-size:14px;color:var(--text2)">'+(d.selection_reason||'-')+'</td>';
     // 원본기사 column
     var origUrl=d.original_url||'';
     html+='<td>'+(origUrl?'<a class="lnk" href="'+origUrl+'" target="_blank" onclick="event.stopPropagation()">원본</a>':'-')+'</td>';
     // 기존 번역 여부 column
     var isTranslated=englishArticles.some(function(ea){return (ea.original_url && d.original_url && ea.original_url===d.original_url)||(ea.title && d.original_title && ea.title.indexOf(d.original_title.slice(0,20))!==-1)});
-    html+='<td style="font-size:12px;text-align:center">'+(isTranslated?'<span style="color:#66bb6a">✅ 번역됨</span>':'-')+'</td>';
+    html+='<td style="font-size:14px;text-align:center">'+(isTranslated?'<span style="color:#66bb6a">✅ 번역됨</span>':'-')+'</td>';
     html+='</tr>';
 
     // Detail row
     var detail='<div class="trans-preview"><strong>번역 본문 미리보기:</strong><br>'+d.translated_body.slice(0,200)+'...</div>';
-    if(locals.length){detail+='<div style="margin-top:8px"><strong style="font-size:12px">현지화 적용:</strong><br>';locals.forEach(function(l){detail+='<span class="local-tag">'+l.original+' → '+l.localized+'</span>'});detail+='</div>'}
+    if(locals.length){detail+='<div style="margin-top:8px"><strong style="font-size:14px">현지화 적용:</strong><br>';locals.forEach(function(l){detail+='<span class="local-tag">'+l.original+' → '+l.localized+'</span>'});detail+='</div>'}
     if(d.selection_reason){detail+='<div style="margin-top:8px;font-size:12px;color:var(--text2)"><strong>선별 이유:</strong> '+d.selection_reason+'</div>'}
     html+='<tr class="issue-row" id="issue-'+idx+'"><td colspan="11"><div class="issue-detail">'+detail+'</div></td></tr>';
   });
