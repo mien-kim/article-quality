@@ -122,7 +122,7 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:14px}
 
 <div class="tbl-wrap">
 <table class="m">
-<thead><tr><th></th><th>매체</th><th>관심도</th><th>품질</th><th>원본 제목 → 번역 제목</th><th>섹션</th><th>날짜</th><th>상태</th><th style="min-width:180px">선별근거</th><th>원본기사</th><th>기존 번역</th></tr></thead>
+<thead><tr><th></th><th>매체</th><th>관심도</th><th>품질</th><th>원본 제목 → 번역 제목</th><th>섹션</th><th>날짜</th><th>상태</th><th style="min-width:180px">선별근거</th><th>원본기사</th></tr></thead>
 <tbody id="tbl"></tbody>
 </table>
 </div>
@@ -134,7 +134,6 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:14px}
 var SUPABASE_URL='https://wwaflpepyrlfdcxvtscp.supabase.co';
 var SUPABASE_KEY='sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 var allData=[];
-var englishArticles=[];
 
 function mediaLabel(m){
   if(m==='sports') return '스경';
@@ -178,10 +177,6 @@ async function loadData(){
     return true;
   });
 
-  // Fetch english_article_quality for cross-check
-  var eUrl=SUPABASE_URL+'/rest/v1/english_article_quality?select=title,url,original_url&published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59';
-  try{var r2=await fetch(eUrl,{headers:{'apikey':SUPABASE_KEY}});englishArticles=await r2.json()}catch(e){englishArticles=[]}
-  if(!Array.isArray(englishArticles)) englishArticles=[];
   document.getElementById('loading').style.display='none';
   document.getElementById('empty').style.display=allData.length?'none':'block';
   render();
@@ -237,16 +232,14 @@ function render(){
     // 원본기사 column
     var origUrl=d.original_url||'';
     html+='<td>'+(origUrl?'<a class="lnk" href="'+origUrl+'" target="_blank" onclick="event.stopPropagation()">원본</a>':'-')+'</td>';
-    // 기존 번역 여부 column
-    var isTranslated=englishArticles.some(function(ea){return (ea.original_url && d.original_url && ea.original_url===d.original_url)||(ea.title && d.original_title && ea.title.indexOf(d.original_title.slice(0,20))!==-1)});
-    html+='<td style="font-size:13px;text-align:center">'+(isTranslated?'<span style="color:#66bb6a">✅ 번역됨</span>':'-')+'</td>';
-    html+='</tr>';
+
+        html+='</tr>';
 
     // Detail row
     var detail='<div class="trans-preview"><strong>번역 본문 미리보기:</strong><br>'+d.translated_body.slice(0,200)+'...</div>';
     if(locals.length){detail+='<div style="margin-top:8px"><strong style="font-size:13px">현지화 적용:</strong><br>';locals.forEach(function(l){detail+='<span class="local-tag">'+l.original+' → '+l.localized+'</span>'});detail+='</div>'}
     if(d.selection_reason){detail+='<div style="margin-top:8px;font-size:13px;color:var(--text2)"><strong>선별 이유:</strong> '+d.selection_reason+'</div>'}
-    html+='<tr class="issue-row" id="issue-'+idx+'"><td colspan="11"><div class="issue-detail">'+detail+'</div></td></tr>';
+    html+='<tr class="issue-row" id="issue-'+idx+'"><td colspan="10"><div class="issue-detail">'+detail+'</div></td></tr>';
   });
   document.getElementById('tbl').innerHTML=html;
 }
