@@ -224,6 +224,9 @@ async function loadData(){
   var url=SUPABASE_URL+'/rest/v1/english_article_quality?select=*&source=eq.kc&published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc';
   try{var r=await fetch(url,{headers:{'apikey':SUPABASE_KEY}});allData=await r.json()}catch(e){allData=[]}
   document.getElementById('loading').style.display='none';
+
+    // Deduplicate by url
+    var seen={};allData=allData.filter(function(d){var key=d.url||d.title;if(seen[key])return false;seen[key]=true;return true});
   document.getElementById('empty').style.display=allData.length?'none':'block';
   render();
 }
