@@ -226,7 +226,7 @@ async function loadData(){
   document.getElementById('loading').style.display='none';
 
     // Deduplicate by url
-    var seen={};allData=allData.filter(function(d){var key=d.url||d.title;if(seen[key])return false;seen[key]=true;return true});
+    var seen={};allData=allData.filter(function(d){var key=d.url||(d.title+d.published_at);if(!key)return true;if(seen[key])return false;seen[key]=true;return true});
   document.getElementById('empty').style.display=allData.length?'none':'block';
   render();
 }
@@ -304,4 +304,7 @@ function toggleIssue(idx){
   else{row.classList.add('open');icon.classList.add('open')}
 }
 
-(function(){va
+(function(){var now=new Date();var f=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';var t=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');document.getElementById('dateFrom').value=f;document.getElementById('dateTo').value=t;loadData()})();
+</script>
+</body>
+</html>
