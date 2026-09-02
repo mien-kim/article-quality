@@ -119,7 +119,7 @@ tr.detail-row td{padding:0}
 <div class="qb" onclick="setRange('today')">오늘</div>
 <div class="qb" onclick="setRange('week')">이번 주</div>
 <div class="qb" onclick="setRange('lastweek')">지난 주</div>
-<div class="qb on" onclick="setRange('month')">이번 달</div>
+<div class="qb" onclick="setRange('month')">이번 달</div>
 </div>
 </div>
 
@@ -406,7 +406,7 @@ function renderDashboard(data){
 
 // Init: load this week
 (function(){
-  var now=new Date();var f=fmt(new Date(now.getFullYear(),now.getMonth(),1));var t=fmt(now);document.getElementById('date-from').value=f;document.getElementById('date-to').value=t;fetchData(f,t);
+  var now=new Date();var f='2026-08-01';var t=fmt(now);document.getElementById('date-from').value=f;document.getElementById('date-to').value=t;fetchData(f,t);
 })();
 </script>
 </body>
