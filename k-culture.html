@@ -190,8 +190,7 @@ var SUPABASE_URL='https://wwaflpepyrlfdcxvtscp.supabase.co';
 var SUPABASE_KEY='sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
 var allData=[];
 
-function cleanText(str){
-  if(!str)return '';
+function cleanText(str){if(!str||typeof str!=='string')return '';
   return str
     .replace(/기저/g,'기준').replace(/젥문/g,'장문').replace(/잡문/g,'장문')
     .replace(/놙음/g,'높음').replace(/놙/g,'높')
