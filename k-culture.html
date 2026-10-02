@@ -188,6 +188,54 @@ a.lnk{color:var(--accent);text-decoration:none;font-size:14px}
 <script>
 var SUPABASE_URL='https://wwaflpepyrlfdcxvtscp.supabase.co';
 var SUPABASE_KEY='sb_publishable_CKWybNK_oZPNMoE3S8mlrQ_5Rag4jS9';
+// ===== Google Sheets data loader (replaces Supabase REST) =====
+var SHEET_ID='1Kasozwlst0oVDw1WDx_Eo6ztJayIrC1qw2ZE9oy8iTk';
+var SHEET_NUM_COLS={id:1,score:1,critical_cnt:1,warning_cnt:1,notice_cnt:1,fk_grade:1,word_count:1,interest_score:1,quality_score:1};
+function parseCSV(text){
+  var rows=[],row=[],f='',q=false,i=0,ch;
+  for(;i<text.length;i++){
+    ch=text[i];
+    if(q){
+      if(ch==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; }
+      else f+=ch;
+    } else {
+      if(ch==='"') q=true;
+      else if(ch===','){row.push(f);f='';}
+      else if(ch==='\n'){row.push(f);rows.push(row);row=[];f='';}
+      else if(ch==='\r'){}
+      else f+=ch;
+    }
+  }
+  if(f!==''||row.length){row.push(f);rows.push(row);}
+  return rows;
+}
+async function sheetQuery(sheet, from, to, filters){
+  var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(sheet)+'&_cb='+Date.now();
+  var res=await fetch(url);
+  var rows=parseCSV(await res.text());
+  if(!rows.length) return [];
+  var head=rows[0], out=[];
+  var t0=from?new Date(from+'T00:00:00Z').getTime():-Infinity;
+  var t1=to?new Date(to+'T23:59:59Z').getTime():Infinity;
+  for(var r=1;r<rows.length;r++){
+    var o={},v;
+    for(var c=0;c<head.length;c++){
+      v=rows[r][c]; if(v===undefined) v='';
+      if(SHEET_NUM_COLS[head[c]]) o[head[c]]=(v===''?null:Number(v));
+      else o[head[c]]=v;
+    }
+    if(o.id===null&&!o.title&&!o.original_title) continue;
+    var pt=o.published_at?new Date(o.published_at).getTime():NaN;
+    if(isNaN(pt)||pt<t0||pt>t1) continue;
+    var ok=true;
+    if(filters){for(var k in filters){if(String(o[k])!==String(filters[k])){ok=false;break;}}}
+    if(ok) out.push(o);
+  }
+  out.sort(function(a,b){return new Date(b.published_at)-new Date(a.published_at);});
+  return out;
+}
+// ===== end loader =====
+
 var allData=[];
 
 function cleanText(str){if(!str||typeof str!=='string')return '';
@@ -220,8 +268,7 @@ async function loadData(){
   if(!from||!to)return;
   document.getElementById('loading').style.display='block';
   document.getElementById('tbl').innerHTML='';
-  var url=SUPABASE_URL+'/rest/v1/english_article_quality?select=*&source=eq.kc&published_at=gte.'+from+'T00:00:00&published_at=lte.'+to+'T23:59:59&order=published_at.desc';
-  try{var r=await fetch(url,{headers:{'apikey':SUPABASE_KEY}});allData=await r.json()}catch(e){allData=[]}
+  try{allData=await sheetQuery('english_article_quality',from,to,{source:'kc'})}catch(e){allData=[]}
   document.getElementById('loading').style.display='none';
 
     // Deduplicate by url
